@@ -294,13 +294,13 @@ The app will be running at `http://localhost:3000`.
 Submit within **3 days** of receiving this exercise.
 
 1. Complete the exercise inside the `project/` folder.
-2. Push your work to a **private** GitHub repository.
+2. Push your work to a GitHub repository.
 3. Update `project/README.md` with:
    - How to run the app locally
    - A brief description of your architecture and any tradeoffs you made
    - What you skipped or didn't finish (if anything)
    - Which AI tools you used and how (if any)
 4. Delete `project/node_modules/` before zipping.
-5. Zip the entire `fullstack-case-study` folder and email it back to your recruiter along with the link to your private repository.
+5. Zip the entire `fullstack-case-study` folder and email it back to your recruiter along with the link to your repository.
 
 Good luck!
