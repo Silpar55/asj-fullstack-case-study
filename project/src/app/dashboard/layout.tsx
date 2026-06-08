@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { barlow } from "../fonts";
+import { barlow } from "@/app/fonts";
 
 export const metadata = {
   title: "Case Study Dashboard",
@@ -10,12 +10,12 @@ const links = [
   {
     src: "stats.svg",
     title: "stats",
-    href: "/stats",
+    href: "stats",
   },
   {
     src: "transactions.svg",
     title: "workspace",
-    href: "/transactions",
+    href: "transactions",
   },
 ];
 
@@ -25,42 +25,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${barlow.className} antialiased`}>
-        <main className="flex">
-          <nav className="flex flex-col align-middle justify-between w-20 h-screen py-5 bg-nav border-r border-divider">
-            <div className="flex flex-col gap-5">
-              <div className="w-full px-1 flex flex-col gap-3">
-                <img src="logo.svg" alt="logo" className="mx-auto" />
-                <div className="border-t border-logo-divider" />
-              </div>
-
-              {links.map(({ src, title, href }) => (
-                <Link
-                  href={`dashboard/${href}`}
-                  key={href}
-                  className="w-full flex flex-col gap-1"
-                >
-                  <img src={src} alt="link-logo" className="mx-auto" />
-                  <p className="text-center text-xs font-bold text-link capitalize">
-                    {title}
-                  </p>
-                </Link>
-              ))}
+    <body className={`${barlow.className} antialiased`}>
+      <main className="flex">
+        <nav className="flex flex-col align-middle justify-between w-20 h-screen py-5 bg-nav border-r border-divider">
+          <div className="flex flex-col gap-5">
+            <div className="w-full px-1 flex flex-col gap-3">
+              <img src="logo.svg" alt="logo" className="mx-auto" />
+              <div className="border-t border-logo-divider" />
             </div>
 
-            <div className="flex flex-col gap-5">
-              <div className="w-full flex flex-col gap-1">
-                <img src="settings.svg" alt="link-logo" className="mx-auto" />
-              </div>
-              <div className="w-full flex flex-col gap-1">
-                <img src="profile.svg" alt="link-logo" className="mx-auto" />
-              </div>
+            {links.map(({ src, title, href }) => (
+              <Link
+                href={`/dashboard/${href}`}
+                key={href}
+                className="w-full flex flex-col gap-1"
+              >
+                <img src={src} alt="link-logo" className="mx-auto" />
+                <p className="text-center text-xs font-bold text-link capitalize">
+                  {title}
+                </p>
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <div className="w-full flex flex-col gap-1">
+              <img src="settings.svg" alt="link-logo" className="mx-auto" />
             </div>
-          </nav>
-          {children}
-        </main>
-      </body>
-    </html>
+            <div className="w-full flex flex-col gap-1">
+              <img src="profile.svg" alt="link-logo" className="mx-auto" />
+            </div>
+          </div>
+        </nav>
+        {children}
+      </main>
+    </body>
   );
 }
