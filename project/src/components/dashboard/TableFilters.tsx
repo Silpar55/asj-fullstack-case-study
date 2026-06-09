@@ -2,6 +2,8 @@ import useSWR from "swr";
 import { barlow } from "@/app/fonts";
 import { getOptions } from "@/lib/api/table";
 import { DatePicker } from "./DatePicker";
+import { exportCSV } from "@/lib/utils/csv";
+import { NormalizedTransaction } from "@/interfaces/banks/normalized";
 
 interface Props {
   filters: {
@@ -12,10 +14,11 @@ interface Props {
     date: string;
   };
   setFilters: any;
+  transactions: NormalizedTransaction[];
 }
 
 const fetcher = () => getOptions();
-const TableFilters = ({ filters, setFilters }: Props) => {
+const TableFilters = ({ filters, setFilters, transactions }: Props) => {
   const { data, error, isLoading } = useSWR("table-filters", fetcher);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -108,14 +111,19 @@ const TableFilters = ({ filters, setFilters }: Props) => {
         </span>
       </div>
 
-      <button className="flex justify-center items-center align-middle uppercase text-sm font-normal bg-black text-white border border-slate-50 border-opacity-20 p-1 px-3 gap-2 rounded-md">
+      <button
+        onClick={() => exportCSV(transactions, `Use Case ${new Date()}`)}
+        className="flex justify-center items-center align-middle uppercase text-sm font-normal bg-black text-white border border-slate-50 border-opacity-20 p-1 px-3 gap-2 rounded-md"
+      >
         <img src="/down-arrow-csv.svg" className="w-3" alt="" />{" "}
         <span className="">csv</span>
       </button>
 
       <DatePicker
         value={filters.date}
-        onChange={(date) => setFilters((prev: Props["filters"]) => ({ ...prev, date }))}
+        onChange={(date) =>
+          setFilters((prev: Props["filters"]) => ({ ...prev, date }))
+        }
       />
     </section>
   );

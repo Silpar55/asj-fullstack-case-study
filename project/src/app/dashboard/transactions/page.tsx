@@ -108,7 +108,11 @@ export default function Transactions() {
       </div>
 
       {/* Table filters */}
-      <TableFilters filters={filters} setFilters={setFilters} />
+      <TableFilters
+        filters={filters}
+        setFilters={setFilters}
+        transactions={filteredTransactions as NormalizedTransaction[]}
+      />
 
       {/* Table */}
       <section className="uppercase flex w-full ml-2 mt-5 ">
