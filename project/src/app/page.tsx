@@ -1,9 +1,25 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { redirect, useRouter } from "next/navigation";
+
 export default function Home() {
-  return (
-    <main className="w-full h-screen flex flex-col justify-center items-center">
-      <h1 className="text-red-300 text-4xl  text-center uppercase">
-        REDIRECT TO LOGIN OR DASHBOARD WHEN FEATURE IS COMPLETE
-      </h1>
-    </main>
-  );
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (!storedUser) {
+      router.push("/login");
+      return;
+    }
+
+    setIsAuthorized(true);
+  }, [router]);
+
+  // To prevent UI of flashing while checking localStorage
+  if (!isAuthorized) return <p>Loading...</p>;
+
+  return redirect("/dashboard/transactions");
 }
