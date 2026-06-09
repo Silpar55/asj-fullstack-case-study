@@ -1,12 +1,22 @@
+import useSWR from "swr";
 import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+import { getUsers } from "@/lib/db/users";
 import { formatRows } from "@/lib/utils/formatRows";
+import ToolTip from "./ToolTip";
 
 interface Props {
   transactions: NormalizedTransaction[];
 }
 
+const fetcher = () => getUsers();
+
 export const Table = ({ transactions }: Props) => {
+  const { data, error, isLoading } = useSWR("get-users", fetcher);
   const formattedTransactions = formatRows(transactions);
+
+  const findUserByName = (name: string) => {
+    return data?.users.find((user) => user.name === name) || null;
+  };
 
   return (
     <section className="max-h-[750px] overflow-y-auto scroll-m-0 h-full bg-nav rounded-xl p-5 w-max min-w-full">
@@ -39,7 +49,10 @@ export const Table = ({ transactions }: Props) => {
               <td>{t.date}</td>
               <td>{t.category}</td>
               <td className="uppercase">{t.bankAcc}</td>
-              <td>{t.authorizedBy as string}</td>
+              <td className="relative group">
+                <span>{t.authorizedBy as string}</span>
+                <ToolTip user={findUserByName(t.authorizedBy)} />;
+              </td>
               <td>{t.vendor}</td>
             </tr>
           ))}
