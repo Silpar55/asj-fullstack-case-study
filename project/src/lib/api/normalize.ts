@@ -62,7 +62,7 @@ export const formatBoa = (
         type: transaction.debitCreditMemo.toLowerCase() as "debit" | "credit",
         category: transaction.spendingCategory,
         vendor: transaction.payee,
-        bank: "amex" as BankType,
+        bank: "boa" as BankType,
         authorizedBy: transaction.originator.name,
         status: transaction.status.toLowerCase() as
           | "pending"

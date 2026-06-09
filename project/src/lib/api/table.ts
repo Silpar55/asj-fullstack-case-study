@@ -1,4 +1,4 @@
-import { getAmexData, getBoaData, getChaseData } from "../db/banks";
+import { NormalizedTransaction } from "@/interfaces/banks/normalized";
 import { getRates } from "../db/rates";
 import { getUsers } from "../db/users";
 import { getNormalizedTransactions } from "./normalize";
@@ -36,7 +36,7 @@ export const getAuthByOptions = async () => {
   usersData.users.map((user) => {
     options.push({
       name: user.name,
-      value: user.name.split(" ").join("_"),
+      value: user.name,
     });
   });
 
@@ -91,4 +91,84 @@ export const getOptions = async () => {
     currency: await getCurrenciesOptions(),
     bankAcc: await getBankAccOptions(),
   };
+};
+
+export const getTransactionsByBank = (
+  transactions: NormalizedTransaction[],
+  bank: string = "all",
+) => {
+  if (bank === "all") return transactions;
+
+  return transactions.filter(
+    (t) => t.bank.toLowerCase() === bank.toLowerCase(),
+  );
+};
+
+export const getTransactionsByAuthBy = (
+  transactions: NormalizedTransaction[],
+  authBy: string = "all",
+) => {
+  if (authBy === "all") return transactions;
+
+  return transactions.filter(
+    (t) => (t.authorizedBy as string).toLowerCase() === authBy.toLowerCase(),
+  );
+};
+
+export const getTransactionsByBankAcc = (
+  transactions: NormalizedTransaction[],
+  id: string = "all",
+) => {
+  if (id === "all") return transactions;
+
+  return transactions.filter((t) => {
+    const parts = t.id.split("-");
+    const lastIndex = parts.length - 1;
+
+    return parts[lastIndex] === id;
+  });
+};
+
+export const unifiedCurrencies = async (
+  transactions: NormalizedTransaction[],
+  currency: "USD" | "CAD" | "EUR" | "GBP" | "all",
+) => {
+  if (currency === "all") return transactions;
+
+  const { rates } = await getRates();
+
+  /* 
+    My idea to unify the currencies is to start from the base of the rates.json
+    Since the USD is the based of the rates.json I will normalized the transactions for USD since I know the value of each
+    currencies against USD:
+    Example: 
+      Inter Currency amount * Inter Currency in USD 
+      1000 CAD * 0.74USD => 740 USD
+
+    After that we can divide the value given by the currency desired in their value at converting to USD
+
+    For example: 
+      Currency desired: GBP
+      Transaction => 1000 CAD
+
+      1 Step:
+      1000 CAD * .74 USD => 740 USD
+
+      2 Step:
+      740 USD / 1.27 GBP => 582.67 GBP
+
+    So the formula is the following
+
+    (amount * rate[from -> USD]) / rate[target -> USD]
+  */
+
+  return transactions.map((t) => {
+    return {
+      ...t,
+      currency: currency,
+      amount:
+        (t.amount * rates[t.currency as "USD" | "CAD" | "EUR" | "GBP"]) /
+        rates[currency],
+    };
+  });
 };

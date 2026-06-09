@@ -24,7 +24,7 @@ export const Table = ({ transactions }: Props) => {
           </tr>
         </thead>
         <tbody className="">
-          {formattedTransactions.slice(30).map((t) => (
+          {formattedTransactions.map((t) => (
             <tr
               key={t.id}
               className="grid grid-cols-[50px_.75fr_.5fr_.5fr_.5fr_.5fr_.5fr_.5fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted"

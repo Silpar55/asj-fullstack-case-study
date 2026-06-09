@@ -13,6 +13,12 @@ import { getUser } from "@/lib/api/auth";
 import { Table } from "@/components/dashboard/Table";
 import { NormalizedTransaction } from "@/interfaces/banks/normalized";
 import TableFilters from "@/components/dashboard/TableFilters";
+import {
+  getTransactionsByAuthBy,
+  getTransactionsByBank,
+  getTransactionsByBankAcc,
+  unifiedCurrencies,
+} from "@/lib/api/table";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -22,7 +28,43 @@ export default function Transactions() {
   // The best practice would be the use of cookies and middleware to handle RABC while keeping pages as server components
   const router = useRouter();
   const { data, error, isLoading } = useSWR("/api/transactions", fetcher);
+
   const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // filters
+  const [filters, setFilters] = useState({
+    bank: "all",
+    authBy: "all",
+    currency: "all",
+    bankAcc: "all",
+  });
+
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    NormalizedTransaction[]
+  >([]);
+
+  useEffect(() => {
+    if (!data) {
+      setFilteredTransactions([]);
+      return;
+    }
+
+    const applyFilters = async () => {
+      let filteredData: NormalizedTransaction[] = data;
+
+      filteredData = getTransactionsByBank(filteredData, filters.bank);
+      filteredData = getTransactionsByAuthBy(filteredData, filters.authBy);
+      filteredData = getTransactionsByBankAcc(filteredData, filters.bankAcc);
+      filteredData = await unifiedCurrencies(
+        filteredData,
+        filters.currency as "USD" | "CAD" | "EUR" | "GBP" | "all",
+      );
+
+      setFilteredTransactions(filteredData);
+    };
+
+    applyFilters();
+  }, [data, filters]);
 
   useEffect(() => {
     const user: UserLS = getUser();
@@ -63,56 +105,7 @@ export default function Transactions() {
       </div>
 
       {/* Table filters */}
-      {/* <section
-        className={`${barlow.className} flex justify-end gap-5 w-max min-w-full`}
-      >
-        <div className="relative w-fit">
-          <select
-            id=""
-            className="appearance-none pr-7 pl-3 py-2 uppercase text-sm font-normal  bg-black text-white border border-slate-50 border-opacity-20 p-1 rounded-md"
-          >
-            <option value="">auth. by</option>
-          </select>
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-            <img src="/down-arrow.svg" alt="▼" />
-          </span>
-        </div>
-        <div className="relative w-fit">
-          <select
-            name=""
-            id=""
-            className="appearance-none pr-7 pl-3 py-2 uppercase text-sm font-normal  bg-black text-white border border-slate-50 border-opacity-20 p-1 rounded-md"
-          >
-            <option value="">show currenty in</option>
-          </select>
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-            <img src="/down-arrow.svg" alt="▼" />
-          </span>
-        </div>
-        <div className="relative w-fit">
-          <select
-            name=""
-            id=""
-            className="appearance-none pr-7 pl-3 py-2 uppercase text-sm font-normal  bg-black text-white border border-slate-50 border-opacity-20 p-1 rounded-md"
-          >
-            <option value="">bank acc.</option>
-          </select>
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-            <img src="/down-arrow.svg" alt="▼" />
-          </span>
-        </div>
-
-        <button className="flex justify-center items-center align-middle uppercase text-sm font-normal bg-black text-white border border-slate-50 border-opacity-20 p-1 px-3 gap-2 rounded-md">
-          <img src="/down-arrow-csv.svg" className="w-3" alt="" />{" "}
-          <span className="">csv</span>
-        </button>
-        <button className="flex justify-center items-center align-middle uppercase text-sm font-normal bg-black text-white border border-slate-50 border-opacity-20 p-1 px-3 gap-2 rounded-md">
-          <img src="/calendar.svg" className="w-3" alt="" />{" "}
-          <span className="">09-11-2024</span>
-        </button>
-      </section> */}
-
-      <TableFilters />
+      <TableFilters filters={filters} setFilters={setFilters} />
 
       {/* Table */}
       <section className="uppercase flex w-full ml-2 mt-5 ">
@@ -121,7 +114,7 @@ export default function Transactions() {
         </h1>
         <h1 className="w-32 text-center font-semibold">Starred (97)</h1>
       </section>
-      <Table transactions={data as NormalizedTransaction[]} />
+      <Table transactions={filteredTransactions as NormalizedTransaction[]} />
     </main>
   );
 }
