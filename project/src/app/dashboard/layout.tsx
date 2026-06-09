@@ -8,12 +8,12 @@ export const metadata = {
 
 const links = [
   {
-    src: "stats.svg",
+    src: "/stats.svg",
     title: "stats",
     href: "stats",
   },
   {
-    src: "transactions.svg",
+    src: "/transactions.svg",
     title: "workspace",
     href: "transactions",
   },
@@ -30,7 +30,7 @@ export default function RootLayout({
         <nav className="flex flex-col align-middle justify-between w-20 h-screen py-5 bg-nav border-r border-divider">
           <div className="flex flex-col gap-5">
             <div className="w-full px-1 flex flex-col gap-3">
-              <img src="logo.svg" alt="logo" className="mx-auto" />
+              <img src="/logo.svg" alt="logo" className="mx-auto" />
               <div className="border-t border-logo-divider" />
             </div>
 
@@ -50,10 +50,10 @@ export default function RootLayout({
 
           <div className="flex flex-col gap-5">
             <div className="w-full flex flex-col gap-1">
-              <img src="settings.svg" alt="link-logo" className="mx-auto" />
+              <img src="/settings.svg" alt="link-logo" className="mx-auto" />
             </div>
             <div className="w-full flex flex-col gap-1">
-              <img src="profile.svg" alt="link-logo" className="mx-auto" />
+              <img src="/profile.svg" alt="link-logo" className="mx-auto" />
             </div>
           </div>
         </nav>

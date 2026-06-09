@@ -8,7 +8,9 @@ module.exports = {
         "divider": "#262626",
         "logo-divider": "#135885",
         "link":"#135885",
-        "dashboard-color":"#C2C2C2"
+        "dashboard-color":"#C2C2C2",
+        "accent-blue":"#0088FF",
+        "dashboard-bg":"#030304"
       },
     },
   },

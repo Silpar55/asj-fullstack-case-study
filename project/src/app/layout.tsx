@@ -13,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${barlow.className} antialiased`}>{children}</body>
+      <body className={`${barlow.className} antialiased bg-dashboard-bg`}>
+        {children}
+      </body>
     </html>
   );
 }
