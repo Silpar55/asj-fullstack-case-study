@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 
-import usersData from "../../../../../data/users/user.json";
 import { User } from "@/app/interfaces/user";
+import { getUsers } from "@/app/lib/users";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, password } = body;
+
+    const usersData = await getUsers();
 
     // Find user in mocked data (in real life, find the user in the database)
     const user = usersData.users.find((u: User) => u.email === email);
