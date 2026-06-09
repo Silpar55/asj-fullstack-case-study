@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatDate } from "@/app/lib/formatTime";
+import { formatDate } from "@/lib/utils/formatTime";
 
 export default function LastUpdated() {
   const [date, setDate] = useState(new Date());

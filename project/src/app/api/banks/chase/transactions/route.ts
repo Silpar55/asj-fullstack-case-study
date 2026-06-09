@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getChaseData } from "@/app/lib/banks";
+import { getChaseData } from "@/lib/db/banks";
 
 export async function GET(request: Request) {
   try {

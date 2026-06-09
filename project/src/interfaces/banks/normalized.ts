@@ -4,9 +4,9 @@ File created by AI at combining the following:
     - minimun requirements for the normalized transaction
 */
 
-import { Charge } from "./amex";
-import { TransactionList } from "./boa";
-import { Transaction } from "./chase";
+import { Charge } from "./banks/amex";
+import { TransactionList } from "./banks/boa";
+import { Transaction } from "./banks/chase";
 
 // Define the Bank Enum/Type for strict type checking
 export type BankType = "chase" | "boa" | "amex";

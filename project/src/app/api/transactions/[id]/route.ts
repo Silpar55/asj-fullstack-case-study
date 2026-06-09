@@ -1,5 +1,5 @@
-import { NormalizedTransaction } from "@/app/interfaces/normalized";
-import { getTransactionById } from "@/app/lib/normalize";
+import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+import { getTransactionById } from "@/lib/api/normalize";
 import { NextResponse, NextRequest } from "next/server";
 
 type RouteContext = {

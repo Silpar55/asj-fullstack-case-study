@@ -1,7 +1,7 @@
 // Here I call transactions json to reuse the logic in normalize transactions
-import { AmexTransaction } from "@/app/interfaces/amex";
-import { BoaTransaction } from "@/app/interfaces/boa";
-import { ChaseTransaction } from "@/app/interfaces/chase";
+import { AmexTransaction } from "@/interfaces/banks/amex";
+import { BoaTransaction } from "@/interfaces/banks/boa";
+import { ChaseTransaction } from "@/interfaces/banks/chase";
 
 import amexTransactions from "@/../data/transactions/amex.json";
 import boaTransactions from "@/../data/transactions/boa.json";

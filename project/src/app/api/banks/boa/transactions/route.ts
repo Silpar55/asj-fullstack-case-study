@@ -1,5 +1,5 @@
-import { getBoaData } from "@/app/lib/banks";
 import { NextResponse } from "next/server";
+import { getBoaData } from "@/lib/db/banks";
 
 export async function GET(request: Request) {
   try {

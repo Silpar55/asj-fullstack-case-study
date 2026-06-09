@@ -5,12 +5,12 @@
     - Execute each of them in parallel for better performance
 
 */
-import { AmexTransaction } from "../interfaces/amex";
-import { BoaTransaction } from "../interfaces/boa";
-import { ChaseTransaction } from "../interfaces/chase";
-import { BankType, NormalizedTransaction } from "../interfaces/normalized";
-import { getAmexData, getBoaData, getChaseData } from "./banks";
-import { getUsers } from "./users";
+import { AmexTransaction } from "@/interfaces/banks/amex";
+import { BoaTransaction } from "@/interfaces/banks/boa";
+import { ChaseTransaction } from "@/interfaces/banks/chase";
+import { BankType, NormalizedTransaction } from "@/interfaces/normalized";
+import { getAmexData, getBoaData, getChaseData } from "@/lib/db/banks";
+import { getUsers } from "@/lib/db/users";
 
 interface Props {
   bank?: string;

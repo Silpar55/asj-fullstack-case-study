@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { User } from "@/app/interfaces/user";
-import { getUsers } from "@/app/lib/users";
+import { User } from "@/interfaces/auth/user";
+import { getUsers } from "@/lib/db/users";
 
 export async function POST(request: Request) {
   try {

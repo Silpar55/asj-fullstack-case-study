@@ -1,5 +1,5 @@
-import { getNormalizedTransactions } from "@/app/lib/normalize";
 import { NextResponse, NextRequest } from "next/server";
+import { getNormalizedTransactions } from "@/lib/api/normalize";
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
-import { TabAccessMatrix } from "../interfaces/tabAccessMatrix";
-import { UserLS } from "../interfaces/userLS";
+import { TabAccessMatrix } from "@/interfaces/auth/tabAccessMatrix";
+import { UserLS } from "@/interfaces/auth/userLS";
 
 const tabAccessMatrix: TabAccessMatrix = {
   transactions: ["admin", "finance_lead", "viewer"],

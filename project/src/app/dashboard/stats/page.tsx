@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { inter, barlow } from "@/app/fonts";
-import LastUpdated from "@/app/components/LastUpdated";
-import { UserLS } from "@/app/interfaces/userLS";
-import { hasAccess } from "@/app/lib/rabc";
+import LastUpdated from "@/components/LastUpdated";
+import { UserLS } from "@/interfaces/auth/userLS";
+import { hasAccess } from "@/lib/api/rabc";
 
 export default function Stats() {
   // RABC Logic

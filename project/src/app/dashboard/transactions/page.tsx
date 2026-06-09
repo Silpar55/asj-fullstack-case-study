@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import LastUpdated from "@/app/components/LastUpdated";
+import LastUpdated from "@/components/LastUpdated";
 import { inter, barlow } from "@/app/fonts";
-import { UserLS } from "@/app/interfaces/userLS";
-import { hasAccess } from "@/app/lib/rabc";
+import { UserLS } from "@/interfaces/auth/userLS";
+import { hasAccess } from "@/lib/api/rabc";
 
 export default function Transactions() {
   // RABC Logic

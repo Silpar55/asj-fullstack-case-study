@@ -1,5 +1,5 @@
-import { getAmexData } from "@/app/lib/banks";
 import { NextResponse } from "next/server";
+import { getAmexData } from "@/lib/db/banks";
 
 export async function GET(request: Request) {
   try {
