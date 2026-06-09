@@ -9,7 +9,7 @@ export const Table = ({ transactions }: Props) => {
   const formattedTransactions = formatRows(transactions);
 
   return (
-    <section className="max-h-[800px] overflow-y-auto scroll-m-0 h-full bg-nav rounded-xl p-5 w-max min-w-full">
+    <section className="max-h-[750px] overflow-y-auto scroll-m-0 h-full bg-nav rounded-xl p-5 w-max min-w-full">
       <table className="text-center mx-auto w-full">
         <thead>
           <tr className="grid grid-cols-[50px_.75fr_.5fr_.5fr_.5fr_.5fr_.5fr_.5fr] items-center uppercase text-white font-bold mb-2">

@@ -12,6 +12,7 @@ import { hasAccess } from "@/lib/api/rabc";
 import { getUser } from "@/lib/api/auth";
 import { Table } from "@/components/dashboard/Table";
 import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+import TableFilters from "@/components/dashboard/TableFilters";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -62,12 +63,11 @@ export default function Transactions() {
       </div>
 
       {/* Table filters */}
-      <section
+      {/* <section
         className={`${barlow.className} flex justify-end gap-5 w-max min-w-full`}
       >
         <div className="relative w-fit">
           <select
-            name=""
             id=""
             className="appearance-none pr-7 pl-3 py-2 uppercase text-sm font-normal  bg-black text-white border border-slate-50 border-opacity-20 p-1 rounded-md"
           >
@@ -110,7 +110,9 @@ export default function Transactions() {
           <img src="/calendar.svg" className="w-3" alt="" />{" "}
           <span className="">09-11-2024</span>
         </button>
-      </section>
+      </section> */}
+
+      <TableFilters />
 
       {/* Table */}
       <section className="uppercase flex w-full ml-2 mt-5 ">
