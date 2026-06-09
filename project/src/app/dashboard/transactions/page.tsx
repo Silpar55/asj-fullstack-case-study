@@ -17,6 +17,7 @@ import {
   getTransactionsByAuthBy,
   getTransactionsByBank,
   getTransactionsByBankAcc,
+  getTransactionsByDate,
   unifiedCurrencies,
 } from "@/lib/api/table";
 
@@ -37,6 +38,7 @@ export default function Transactions() {
     authBy: "all",
     currency: "all",
     bankAcc: "all",
+    date: "",
   });
 
   const [filteredTransactions, setFilteredTransactions] = useState<
@@ -59,6 +61,7 @@ export default function Transactions() {
         filteredData,
         filters.currency as "USD" | "CAD" | "EUR" | "GBP" | "all",
       );
+      filteredData = getTransactionsByDate(filteredData, filters.date);
 
       setFilteredTransactions(filteredData);
     };

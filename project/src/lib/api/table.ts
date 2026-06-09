@@ -129,6 +129,17 @@ export const getTransactionsByBankAcc = (
   });
 };
 
+export const getTransactionsByDate = (
+  transactions: NormalizedTransaction[],
+  date: string,
+) => {
+  if (!date) return transactions;
+
+  return transactions.filter(
+    (t) => new Date(t.date).getTime() >= new Date(date).getTime(),
+  );
+};
+
 export const unifiedCurrencies = async (
   transactions: NormalizedTransaction[],
   currency: "USD" | "CAD" | "EUR" | "GBP" | "all",

@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { barlow } from "@/app/fonts";
 import { getOptions } from "@/lib/api/table";
+import { DatePicker } from "./DatePicker";
 
 interface Props {
   filters: {
@@ -8,9 +9,11 @@ interface Props {
     authBy: string;
     currency: string;
     bankAcc: string;
+    date: string;
   };
   setFilters: any;
 }
+
 const fetcher = () => getOptions();
 const TableFilters = ({ filters, setFilters }: Props) => {
   const { data, error, isLoading } = useSWR("table-filters", fetcher);
@@ -24,6 +27,7 @@ const TableFilters = ({ filters, setFilters }: Props) => {
     }));
   };
 
+  console.log(filters);
   return (
     <section
       className={`${barlow.className} flex justify-end gap-5 w-max min-w-full`}
@@ -109,10 +113,10 @@ const TableFilters = ({ filters, setFilters }: Props) => {
         <span className="">csv</span>
       </button>
 
-      <button className="flex justify-center items-center align-middle uppercase text-sm font-normal bg-black text-white border border-slate-50 border-opacity-20 p-1 px-3 gap-2 rounded-md">
-        <img src="/calendar.svg" className="w-3" alt="" />{" "}
-        <span className="">09-11-2024</span>
-      </button>
+      <DatePicker
+        value={filters.date}
+        onChange={(date) => setFilters((prev: Props["filters"]) => ({ ...prev, date }))}
+      />
     </section>
   );
 };
