@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { barlow } from "@/app/fonts";
+import Logout from "@/components/dashboard/Logout";
 
 export const metadata = {
   title: "Case Study Dashboard",
@@ -48,6 +49,7 @@ export default function RootLayout({
         </div>
 
         <div className="flex flex-col gap-5">
+          <Logout />
           <div className="w-full flex flex-col gap-1">
             <img src="/settings.svg" alt="link-logo" className="mx-auto" />
           </div>
