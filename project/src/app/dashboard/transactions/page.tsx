@@ -3,17 +3,24 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import useSWR from "swr";
+
 import LastUpdated from "@/components/dashboard/LastUpdated";
 import { inter, barlow } from "@/app/fonts";
 import { UserLS } from "@/interfaces/auth/userLS";
 import { hasAccess } from "@/lib/api/rabc";
 import { getUser } from "@/lib/api/auth";
+import { Table } from "@/components/dashboard/Table";
+import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Transactions() {
   // RABC Logic
   // Note: putting "use client" in a page breaks the server components principle, however is necessary for local storage
   // The best practice would be the use of cookies and middleware to handle RABC while keeping pages as server components
   const router = useRouter();
+  const { data, error, isLoading } = useSWR("/api/transactions", fetcher);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
@@ -39,7 +46,11 @@ export default function Transactions() {
   }, [router]);
 
   // To prevent UI of flashing while checking localStorage
-  if (!isAuthorized) return <p>Loading...</p>;
+  if (!isAuthorized) return <p className="text-white">Loading...</p>;
+
+  if (isLoading) return <p className="text-white">Loading...</p>;
+
+  if (error) return <p className="text-white">Error loading transactions</p>;
 
   return (
     <main
@@ -108,48 +119,7 @@ export default function Transactions() {
         </h1>
         <h1 className="w-32 text-center font-semibold">Starred (97)</h1>
       </section>
-      <section className="max-h-full h-full bg-nav rounded-xl p-5 w-max min-w-full ">
-        <table className="text-center mx-auto w-full">
-          <thead>
-            <tr className="grid grid-cols-[50px_2fr_1fr_1.5fr_1fr_1.5fr_1.5fr_1fr] items-center uppercase text-white font-bold mb-2">
-              <th></th>
-              <th>Transaction</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Category</th>
-              <th>Bank Acc.</th>
-              <th>Authorized By</th>
-              <th>Vendor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="grid grid-cols-[50px_2.0fr_1fr_1.5fr_1fr_1.5fr_1.5fr_1fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted">
-              <th className="flex justify-end">
-                <img src="/star.svg" alt="" className="w-6" />
-              </th>
-              <td>Cloud Infrastructure Renewal</td>
-              <td>USD $12,480.00</td>
-              <td>Sep 12, 2024</td>
-              <td>Software</td>
-              <td>BOA ****4521</td>
-              <td>Maria Chen</td>
-              <td>AWS</td>
-            </tr>
-            <tr className="grid grid-cols-[50px_2.0fr_1fr_1.5fr_1fr_1.5fr_1.5fr_1fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted">
-              <th className="flex justify-end">
-                <img src="/star-blue.svg" alt="" className="w-6" />
-              </th>
-              <td>Cloud Infrastructure Renewal</td>
-              <td>USD $12,480.00</td>
-              <td>Sep 12, 2024</td>
-              <td>Software</td>
-              <td>BOA ****4521</td>
-              <td>Maria Chen</td>
-              <td>AWS</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <Table transactions={data as NormalizedTransaction[]} />
     </main>
   );
 }
