@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { barlow } from "@/app/fonts";
-import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Case Study Dashboard",

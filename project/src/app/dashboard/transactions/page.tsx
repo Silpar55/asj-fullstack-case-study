@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import LastUpdated from "@/components/LastUpdated";
+import LastUpdated from "@/components/dashboard/LastUpdated";
 import { inter, barlow } from "@/app/fonts";
 import { UserLS } from "@/interfaces/auth/userLS";
 import { hasAccess } from "@/lib/api/rabc";
+import { getUser } from "@/lib/api/auth";
 
 export default function Transactions() {
   // RABC Logic
@@ -16,14 +17,12 @@ export default function Transactions() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const user: UserLS = getUser();
 
-    if (!storedUser) {
+    if (!user) {
       router.push("/login");
       return;
     }
-
-    const user: UserLS = JSON.parse(storedUser);
 
     /* We require to know at least one allowed tab is allowed, 
       since login/ and dashboard/ redirects always to transactions tab, 

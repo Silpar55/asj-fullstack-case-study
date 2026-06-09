@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
+import { getUser } from "@/lib/api/auth";
 
 export default function Home() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const user = getUser();
 
-    if (!storedUser) {
+    if (!user) {
       router.push("/login");
       return;
     }

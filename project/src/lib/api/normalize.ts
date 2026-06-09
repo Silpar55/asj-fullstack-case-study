@@ -8,7 +8,7 @@
 import { AmexTransaction } from "@/interfaces/banks/amex";
 import { BoaTransaction } from "@/interfaces/banks/boa";
 import { ChaseTransaction } from "@/interfaces/banks/chase";
-import { BankType, NormalizedTransaction } from "@/interfaces/normalized";
+import { BankType, NormalizedTransaction } from "@/interfaces/banks/normalized";
 import { getAmexData, getBoaData, getChaseData } from "@/lib/db/banks";
 import { getUsers } from "@/lib/db/users";
 
