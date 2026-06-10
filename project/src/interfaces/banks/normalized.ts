@@ -4,9 +4,9 @@ File created by AI at combining the following:
     - minimun requirements for the normalized transaction
 */
 
-import { Charge } from "./amex";
-import { TransactionList } from "./boa";
-import { Transaction } from "./chase";
+import { AmexTransaction, Charge } from "./amex";
+import { BoaTransaction, TransactionList } from "./boa";
+import { ChaseTransaction, Transaction } from "./chase";
 
 // Define the Bank Enum/Type for strict type checking
 export type BankType = "chase" | "boa" | "amex";
@@ -57,7 +57,7 @@ export interface NormalizedTransaction {
   authorizedBy: User | null | string;
 
   /** The original raw object from the bank (used for the detail modal) */
-  source: RawTransactionSource;
+  source: AmexTransaction | BoaTransaction | ChaseTransaction;
 
   // --- Recommended Additions ---
 

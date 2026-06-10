@@ -6,11 +6,17 @@ import ToolTip from "./ToolTip";
 
 interface Props {
   transactions: NormalizedTransaction[];
+  setTransactionToShow: any;
+  setIsModalOpen: any;
 }
 
 const fetcher = () => getUsers();
 
-export const Table = ({ transactions }: Props) => {
+export const Table = ({
+  transactions,
+  setTransactionToShow,
+  setIsModalOpen,
+}: Props) => {
   const { data, error, isLoading } = useSWR("get-users", fetcher);
   const formattedTransactions = formatRows(transactions);
 
@@ -34,8 +40,12 @@ export const Table = ({ transactions }: Props) => {
           </tr>
         </thead>
         <tbody className="">
-          {formattedTransactions.map((t) => (
+          {formattedTransactions.map((t, index) => (
             <tr
+              onClick={() => {
+                setTransactionToShow(transactions[index]);
+                setIsModalOpen(true);
+              }}
               key={t.id}
               className="grid grid-cols-[50px_.75fr_.5fr_.5fr_.5fr_.5fr_.5fr_.5fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted"
             >
@@ -51,7 +61,7 @@ export const Table = ({ transactions }: Props) => {
               <td className="uppercase">{t.bankAcc}</td>
               <td className="relative group">
                 <span>{t.authorizedBy as string}</span>
-                <ToolTip user={findUserByName(t.authorizedBy)} />;
+                <ToolTip user={findUserByName(t.authorizedBy)} />
               </td>
               <td>{t.vendor}</td>
             </tr>

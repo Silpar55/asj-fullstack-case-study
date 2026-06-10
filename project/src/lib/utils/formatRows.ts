@@ -22,7 +22,7 @@ const currencyFormatters = {
   }),
 };
 
-const formatCurrency = (amount: number, currency: string) => {
+export const formatCurrency = (amount: number, currency: string) => {
   const formatter =
     currencyFormatters[currency as keyof typeof currencyFormatters];
 
@@ -45,7 +45,7 @@ const formatAuthorizedBy = (
   return authorizedBy.name;
 };
 
-const formatDate = (date: string) => {
+export const formatDate = (date: string) => {
   const newDate = new Date(date + "T00:00:00");
 
   const formatted = newDate.toLocaleDateString("en-US", {
@@ -57,7 +57,7 @@ const formatDate = (date: string) => {
   return formatted;
 };
 
-const buildBankAcc = (transaction: NormalizedTransaction) => {
+export const buildBankAcc = (transaction: NormalizedTransaction) => {
   const lastDigits = transaction.id.split("-");
   const lastIndex = lastDigits.length - 1;
 

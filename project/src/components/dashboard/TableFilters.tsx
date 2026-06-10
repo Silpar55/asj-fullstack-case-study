@@ -30,7 +30,6 @@ const TableFilters = ({ filters, setFilters, transactions }: Props) => {
     }));
   };
 
-  console.log(filters);
   return (
     <section
       className={`${barlow.className} flex justify-end gap-5 w-max min-w-full`}

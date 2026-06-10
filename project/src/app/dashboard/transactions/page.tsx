@@ -20,6 +20,7 @@ import {
   getTransactionsByDate,
   unifiedCurrencies,
 } from "@/lib/api/table";
+import { Modal } from "@/components/dashboard/Modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -31,6 +32,7 @@ export default function Transactions() {
   const { data, error, isLoading } = useSWR("/api/transactions", fetcher);
 
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // filters
   const [filters, setFilters] = useState({
@@ -44,6 +46,9 @@ export default function Transactions() {
   const [filteredTransactions, setFilteredTransactions] = useState<
     NormalizedTransaction[]
   >([]);
+
+  const [transactionToShow, setTransactionToShow] =
+    useState<NormalizedTransaction | null>(null);
 
   useEffect(() => {
     if (!data) {
@@ -102,6 +107,13 @@ export default function Transactions() {
     <main
       className={`${inter.className} text-dashboard-color w-full flex flex-col p-5`}
     >
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Transaction Details"
+        transaction={transactionToShow}
+      />
+
       <div className={`${barlow.className}`}>
         <LastUpdated />
         <h1 className="uppercase text-4xl mb-5">Transactions</h1>
@@ -121,7 +133,11 @@ export default function Transactions() {
         </h1>
         <h1 className="w-32 text-center font-semibold">Starred (97)</h1>
       </section>
-      <Table transactions={filteredTransactions as NormalizedTransaction[]} />
+      <Table
+        transactions={filteredTransactions as NormalizedTransaction[]}
+        setTransactionToShow={setTransactionToShow}
+        setIsModalOpen={setIsModalOpen}
+      />
     </main>
   );
 }
