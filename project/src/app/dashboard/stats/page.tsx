@@ -9,6 +9,8 @@ import { UserLS } from "@/interfaces/auth/userLS";
 import { hasAccess } from "@/lib/api/rabc";
 import { getUser } from "@/lib/api/auth";
 import Spinner from "@/components/dashboard/Spinner";
+import CashInCard from "@/components/dashboard/stats/KPI/CashInCard";
+import CashOutCard from "@/components/dashboard/stats/KPI/CashOutCard";
 
 export default function Stats() {
   // RABC Logic
@@ -49,12 +51,22 @@ export default function Stats() {
 
   return (
     <main
-      className={`${inter.className} text-dashboard-color w-full flex flex-col p-5`}
+      className={`${inter.className} text-dashboard-color w-full flex flex-col p-5 gap-10`}
     >
       <div className={`${barlow.className} px-5`}>
         <LastUpdated />
         <h1 className="uppercase text-4xl">Stats</h1>
       </div>
+
+      <section className="w-full flex justify-between gap-5">
+        <section className="w-1/2 flex gap-5">
+          <CashInCard />
+          <CashOutCard />
+        </section>
+        <section className="w-1/2">
+          <h1>RIGHT</h1>
+        </section>
+      </section>
     </main>
   );
 }

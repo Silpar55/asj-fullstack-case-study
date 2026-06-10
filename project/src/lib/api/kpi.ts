@@ -1,10 +1,10 @@
-// Here I will hold the logic of all the KPI displayed in the stat dashboard
+// Here I will hold the logic of all the KPI displayed in the stats dashboard
 
 import { getNormalizedTransactions } from "./normalize";
 import { unifiedCurrencies } from "./table";
 
 // Total cash in
-const getTotalCashIn = async () => {
+export const getTotalCashIn = async () => {
   // Get only transactions that are positive (Credit type)
   let transactions = await getNormalizedTransactions({ amount: "0" });
 
@@ -15,7 +15,7 @@ const getTotalCashIn = async () => {
 };
 
 // Total cash out
-const getTotalCashOut = async () => {
+export const getTotalCashOut = async () => {
   // Get all transactions to filter and get only the negative ones
   const transactions = await getNormalizedTransactions({});
   let negTransactions = transactions.filter((t) => t.amount <= 0);
@@ -26,17 +26,17 @@ const getTotalCashOut = async () => {
   return negTransactions.reduce((curr, t) => curr + t.amount, 0);
 };
 
-const getNetCashFlow = async () => {
+export const getNetCashFlow = async () => {
   // To avoid calling twice getNormalizedTransactions we can retrieve everything and sum up every amount
   let transactions = await getNormalizedTransactions({});
 
   // Convert all amount in USD
   transactions = await unifiedCurrencies(transactions, "USD");
 
-  return transactions.reduce((curr, t) => curr + t.amount, 0);
+  return transactions.reduce((curr, t) => curr + t.amount, 0).toFixed(0);
 };
 
-const getTopVendor = async () => {
+export const getTopVendor = async () => {
   // To get top vendors we can create a hashmap that allow us to sum up amounts based on the vendor
 
   let transactions = await getNormalizedTransactions({});
@@ -60,7 +60,7 @@ const getTopVendor = async () => {
   return topVendors;
 };
 
-const getTopCategory = async () => {
+export const getTopCategory = async () => {
   // Same approach as vendor but for category
 
   let transactions = await getNormalizedTransactions({});
@@ -84,7 +84,7 @@ const getTopCategory = async () => {
   return topCategories;
 };
 
-const getVendorCount = async () => {
+export const getVendorCount = async () => {
   // In this case we can use Set because automatically ignore duplicates and then we return its size
 
   const transactions = await getNormalizedTransactions({});
