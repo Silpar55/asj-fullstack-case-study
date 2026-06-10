@@ -1,4 +1,4 @@
-import { getTopSpenders, getTotalCashIn, getTotalCashOut } from "@/lib/api/kpi";
+import { getTopSpenders } from "@/lib/api/kpi";
 import useSWR from "swr";
 import SpenderAnimatedBar from "./SpenderAnimatedBar";
 import Spinner from "@/components/dashboard/Spinner";
@@ -12,41 +12,33 @@ const colors = [
   { bg: "bg-indigo-500", text: "text-indigo-500" },
 ];
 const TopSpender = () => {
-  const { data: cashIn, isLoading: cashInIsLoading } = useSWR("cash-in", () =>
-    getTotalCashIn(),
-  );
-  const { data: cashOut, isLoading: cashOutIsLoading } = useSWR(
-    "cash-out",
-    () => getTotalCashOut(),
-  );
   const { data: spenders, isLoading: spenderIsLoading } = useSWR(
     "spenders",
     () => getTopSpenders(),
   );
 
-  const totalSpending = (cashIn as number) - (cashOut as number);
   let percentages: {
     percentage: number;
     color: string;
   }[] = [];
 
   const accPercentages = (amount: number, color: string) => {
-    if (!totalSpending) return 0;
+    if (!spenders?.total) return 0;
 
     percentages.push({
-      percentage: (amount / totalSpending) * 100,
+      percentage: (amount / spenders?.total) * 100,
       color,
     });
   };
 
-  if (cashInIsLoading || cashOutIsLoading || spenderIsLoading) {
+  if (spenderIsLoading) {
     return <Spinner />;
   }
   return (
     <section className="mt-2">
       <SpenderAnimatedBar percentages={percentages} />
       <div className="flex gap-3 mt-2">
-        {spenders?.map((spender, index) => {
+        {spenders?.topSpenders?.map((spender, index) => {
           accPercentages(spender[1], colors[index % colors.length].bg);
           return (
             <div key={spender[0]} className="flex gap-2 items-center">

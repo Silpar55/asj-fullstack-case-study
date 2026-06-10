@@ -35,6 +35,18 @@ export default function Transactions() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Star — in-memory only, starts empty
+  const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<"all" | "starred">("all");
+
+  const toggleStar = (id: string) => {
+    setStarredIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
   // filters
   const [filters, setFilters] = useState({
     bank: "all",
@@ -135,17 +147,40 @@ export default function Transactions() {
         transactions={filteredTransactions as NormalizedTransaction[]}
       />
 
-      {/* Table */}
-      <section className="uppercase flex w-full ml-2 mt-5 ">
-        <h1 className="w-20 text-center border-b-2 border-accent-blue font-semibold">
+      {/* Table tabs */}
+      <section className="uppercase flex w-full ml-2 mt-5">
+        <h1
+          onClick={() => setActiveTab("all")}
+          className={`w-20 text-center border-b-2 font-semibold cursor-pointer transition-colors ${
+            activeTab === "all"
+              ? "border-accent-blue"
+              : "border-transparent text-gray-500 hover:text-gray-300"
+          }`}
+        >
           All
         </h1>
-        <h1 className="w-32 text-center font-semibold">Starred (97)</h1>
+        <h1
+          onClick={() => setActiveTab("starred")}
+          className={`w-36 text-center border-b-2 font-semibold cursor-pointer transition-colors ${
+            activeTab === "starred"
+              ? "border-accent-blue"
+              : "border-transparent text-gray-500 hover:text-gray-300"
+          }`}
+        >
+          Starred ({starredIds.size})
+        </h1>
       </section>
+
       <Table
-        transactions={filteredTransactions as NormalizedTransaction[]}
+        transactions={
+          activeTab === "starred"
+            ? filteredTransactions.filter((t) => starredIds.has(t.id))
+            : (filteredTransactions as NormalizedTransaction[])
+        }
         setTransactionToShow={setTransactionToShow}
         setIsModalOpen={setIsModalOpen}
+        starredIds={starredIds}
+        toggleStar={toggleStar}
       />
     </main>
   );

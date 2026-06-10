@@ -33,7 +33,7 @@ export const formatAmex = (
         currency: charge.billingCurrency,
         type: charge.amountInCents >= 0 ? "debit" : "credit",
         category: charge.merchant.category,
-        vendor: charge.merchant.name,
+        vendor: charge.merchant.name.trim().toLowerCase(),
         bank: "amex" as BankType,
         authorizedBy: charge.employee.name,
         status: charge.status.toLowerCase() as
@@ -57,11 +57,15 @@ export const formatBoa = (
         date: transaction.transactionDate,
         postDate: transaction.postedDate,
         description: transaction.description,
-        amount: transaction.amount,
+        amount:
+          (transaction.transactionType.toLowerCase() as "debit" | "credit") ===
+          "credit"
+            ? transaction.amount
+            : -transaction.amount,
         currency: transaction.currencyCode,
         type: transaction.debitCreditMemo.toLowerCase() as "debit" | "credit",
         category: transaction.spendingCategory,
-        vendor: transaction.payee,
+        vendor: transaction.payee.trim().toLowerCase(),
         bank: "boa" as BankType,
         authorizedBy: transaction.originator.name,
         status: transaction.status.toLowerCase() as
@@ -86,15 +90,11 @@ export const formatChase = (
         date: transaction.transactionDate,
         postDate: transaction.postingDate,
         description: transaction.description,
-        amount:
-          (transaction.transactionType.toLowerCase() as "debit" | "credit") ===
-          "credit"
-            ? transaction.amount
-            : -transaction.amount,
+        amount: transaction.amount,
         currency: transaction.currency,
         type: transaction.transactionType.toLowerCase() as "debit" | "credit",
         category: transaction.categoryName,
-        vendor: transaction.merchantName,
+        vendor: transaction.merchantName.trim().toLowerCase(),
         bank: "chase" as BankType,
         authorizedBy: transaction.initiatedBy.name,
         status: transaction.pending ? "pending" : "posted",

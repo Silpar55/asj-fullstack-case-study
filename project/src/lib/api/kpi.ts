@@ -4,6 +4,15 @@ import { TransactionList } from "@/interfaces/banks/boa";
 import { getNormalizedTransactions } from "./normalize";
 import { unifiedCurrencies } from "./table";
 import { getAmexData, getChaseData } from "../db/banks";
+import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+
+// Get only debit or credit transactions
+const getTypeTransactions = (
+  transactions: NormalizedTransaction[],
+  type: string,
+) => {
+  return transactions.filter((t) => t.type === type);
+};
 
 // Total cash in
 export const getTotalCashIn = async () => {
@@ -43,6 +52,7 @@ export const getTopVendors = async () => {
   // Then we can also vendor's last transaction
 
   let transactions = await getNormalizedTransactions({});
+  transactions = getTypeTransactions(transactions, "debit");
 
   // Convert all amount in USD
   transactions = await unifiedCurrencies(transactions, "USD");
@@ -56,22 +66,19 @@ export const getTopVendors = async () => {
   > = new Map();
 
   transactions.forEach((t) => {
-    const current = vendors.get(t.vendor) ?? {
+    const key = t.vendor.trim().toLowerCase(); // Normalize key to avoid duplictes
+    const current = vendors.get(key) ?? {
       amount: 0,
       transactionDate: "",
     };
 
-    let latestTransaction: string = current.transactionDate;
-    // Check if the new transaction's date is earliest than current
-    if (
+    const isMoreRecent =
       !current.transactionDate ||
-      new Date(t.date).getDate() < new Date(current.transactionDate).getDate()
-    )
-      latestTransaction = t.date;
+      new Date(t.date).getTime() > new Date(current.transactionDate).getTime();
 
     vendors.set(t.vendor, {
-      amount: current.amount + t.amount,
-      transactionDate: latestTransaction,
+      amount: Math.abs(current.amount) + Math.abs(t.amount),
+      transactionDate: isMoreRecent ? t.date : current.transactionDate,
     });
   });
 
@@ -87,10 +94,10 @@ export const getTopVendors = async () => {
 };
 
 export const getTopSpenders = async () => {
-  // Here we need to join the total spending (either cashIn or cashOut) to know which person
-  // has been the one that flow the most cash
+  let total = 0;
 
   let transactions = await getNormalizedTransactions({});
+  transactions = getTypeTransactions(transactions, "debit");
 
   // Convert all amount in USD
   transactions = await unifiedCurrencies(transactions, "USD");
@@ -98,6 +105,7 @@ export const getTopSpenders = async () => {
   const spender = new Map();
 
   transactions.forEach((t) => {
+    total += Math.abs(t.amount);
     spender.set(
       t.authorizedBy,
       (spender.get(t.authorizedBy) ?? 0) + Math.abs(t.amount),
@@ -109,14 +117,15 @@ export const getTopSpenders = async () => {
   const spenderArray: [string, number][] = Array.from(spender);
   const sorted = spenderArray.sort((a, b) => b[1] - a[1]);
 
-  const topSpender = sorted; // We want to display all spender for better look
+  const topSpenders = sorted; // We want to display all spender for better look
 
-  return topSpender;
+  return { topSpenders, total };
 };
 export const getTopCategories = async () => {
   // Same approach as vendor but for category
 
   let transactions = await getNormalizedTransactions({});
+  transactions = getTypeTransactions(transactions, "debit");
 
   // Convert all amount in USD
   transactions = await unifiedCurrencies(transactions, "USD");
@@ -124,7 +133,10 @@ export const getTopCategories = async () => {
   const categories = new Map();
 
   transactions.forEach((t) => {
-    categories.set(t.category, (categories.get(t.category) ?? 0) + t.amount);
+    categories.set(
+      t.category,
+      (categories.get(t.category) ?? 0) + Math.abs(t.amount),
+    );
   });
 
   // Then convert into array, sort by highest value and get top categories
