@@ -49,9 +49,9 @@ export default function Stats() {
 
   return (
     <main
-      className={`${inter.className} text-dashboard-color w-full flex flex-col p-2`}
+      className={`${inter.className} text-dashboard-color w-full flex flex-col p-5`}
     >
-      <div className={`${barlow.className}`}>
+      <div className={`${barlow.className} px-5`}>
         <LastUpdated />
         <h1 className="uppercase text-4xl">Stats</h1>
       </div>

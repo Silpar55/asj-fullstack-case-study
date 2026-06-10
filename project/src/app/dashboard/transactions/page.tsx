@@ -105,7 +105,12 @@ export default function Transactions() {
       </div>
     );
 
-  if (error) return <p className="text-white">Error loading transactions</p>;
+  if (error)
+    return (
+      <div className="w-full h-screen flex justify-center items-center align-middle">
+        <h1 className="text-white text-2xl">Error loading transactions</h1>
+      </div>
+    );
 
   return (
     <main

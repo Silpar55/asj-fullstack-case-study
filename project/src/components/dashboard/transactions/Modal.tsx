@@ -195,7 +195,7 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
         <div className="flex flex-col justify-center gap-2 p-5 align-middle w-full items-center text-white">
           <div className={`flex justify-end w-full text-xs `}>
             <span
-              className={`px-2 p-1 rounded-xl uppercase font-bold ${transaction?.type === "credit" ? "bg-red-700" : "bg-green-700"}`}
+              className={`px-2 p-1 rounded-xl uppercase font-bold ${transaction?.type === "debit" ? "bg-red-700" : "bg-green-700"}`}
             >
               {transaction?.type}
             </span>
