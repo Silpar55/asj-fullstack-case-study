@@ -167,7 +167,10 @@ export const getBankAccountBalance = async (bank: string) => {
       `account.currentBalance`.
   */
 
-  const transactions = await getNormalizedTransactions({ bank });
+  let transactions = await getNormalizedTransactions({ bank });
+
+  // Convert all amount in USD
+  transactions = await unifiedCurrencies(transactions, "USD");
 
   // BoA
   // Real running balance is available per transaction in source, no need to accumulate manually
@@ -240,4 +243,31 @@ export const getBankAccountBalance = async (bank: string) => {
       monthlyFlow: flow,
     };
   });
+};
+
+export const getCashFlow = async () => {
+  // Here we store all debit and all credit type happend in the month with every transaction
+
+  let transactions = await getNormalizedTransactions({});
+
+  // Convert all amount in USD
+  transactions = await unifiedCurrencies(transactions, "USD");
+
+  const debit = new Map();
+  const credit = new Map();
+
+  transactions.forEach((t) => {
+    const yearMonth = t.date.slice(0, 7); // YYYY-MM
+
+    if (t.type === "debit")
+      debit.set(yearMonth, (debit.get(yearMonth) ?? 0) + t.amount);
+
+    if (t.type === "credit")
+      credit.set(yearMonth, (credit.get(yearMonth) ?? 0) + t.amount);
+  });
+
+  return {
+    debit: Array.from(debit),
+    credit: Array.from(credit),
+  };
 };

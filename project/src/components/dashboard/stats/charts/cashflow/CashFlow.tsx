@@ -1,21 +1,16 @@
 "use client";
-import { getBankAccountBalance } from "@/lib/api/kpi";
+import { getCashFlow } from "@/lib/api/kpi";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import useSWR from "swr";
-
-interface Props {
-  bank: string;
-}
 
 const formatMonthYear = (yearMonth: string) => {
   const [year, month] = yearMonth.split("-");
@@ -36,14 +31,17 @@ const formatFullDollar = (value: number) =>
     currency: "USD",
   }).format(value);
 
-const CustomTick = (props: any) => {
-  const { x, y, payload } = props;
+const CustomTick = (props: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}) => {
+  const { x = 0, y = 0, payload } = props;
+  if (!payload?.value) return null;
 
   const [year, month] = payload.value.split("-");
   const date = new Date(Number(year), Number(month) - 1, 1);
-
   const monthLabel = date.toLocaleDateString("en-US", { month: "short" });
-  const yearLabel = date.getFullYear();
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -52,7 +50,7 @@ const CustomTick = (props: any) => {
           {monthLabel}
         </tspan>
         <tspan x={0} dy={14}>
-          {yearLabel}
+          {year}
         </tspan>
       </text>
     </g>
@@ -72,7 +70,7 @@ const CustomTooltip = ({
 
   return (
     <div className="bg-nav border border-gray-700 rounded-lg px-4 py-3 shadow-xl text-xs min-w-[180px]">
-      <p className="text-gray-400 font-semibold uppercase break-words tracking-wider mb-2">
+      <p className="text-gray-400 font-semibold uppercase tracking-wider mb-2">
         {formatMonthYear(label)}
       </p>
       {payload.map((entry) => (
@@ -81,7 +79,7 @@ const CustomTooltip = ({
           className="flex justify-between gap-6 mb-1 last:mb-0"
         >
           <span style={{ color: entry.color }} className="font-medium">
-            {entry.dataKey === "monthlyFlow" ? "Monthly Flow" : "Balance"}
+            {entry.dataKey === "cashIn" ? "Cash In" : "Cash Out"}
           </span>
           <span className="font-bold text-white">
             {formatFullDollar(entry.value)}
@@ -92,11 +90,29 @@ const CustomTooltip = ({
   );
 };
 
-const BankAccBalance = ({ bank }: Props) => {
-  // Include bank in the SWR key so the chart refetches when the dropdown changes
-  const { data, isLoading } = useSWR(["balance", bank], () =>
-    getBankAccountBalance(bank),
-  );
+// Merge the two [month, amount][] arrays into one flat array recharts can consume.
+const mergeData = (debit: [string, number][], credit: [string, number][]) => {
+  const monthMap = new Map<string, { cashIn: number; cashOut: number }>();
+
+  credit.forEach(([month, amount]) => {
+    const entry = monthMap.get(month) ?? { cashIn: 0, cashOut: 0 };
+    entry.cashIn = Math.abs(amount);
+    monthMap.set(month, entry);
+  });
+
+  debit.forEach(([month, amount]) => {
+    const entry = monthMap.get(month) ?? { cashIn: 0, cashOut: 0 };
+    entry.cashOut = Math.abs(amount);
+    monthMap.set(month, entry);
+  });
+
+  return Array.from(monthMap.keys())
+    .sort()
+    .map((month) => ({ month, ...monthMap.get(month)! }));
+};
+
+const CashFlow = () => {
+  const { data, isLoading } = useSWR("cashflow", () => getCashFlow());
 
   if (isLoading) {
     return (
@@ -106,7 +122,7 @@ const BankAccBalance = ({ bank }: Props) => {
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!data) {
     return (
       <div className="flex h-full items-center justify-center text-gray-500 text-sm">
         No data available
@@ -114,12 +130,15 @@ const BankAccBalance = ({ bank }: Props) => {
     );
   }
 
-  // Used AI for improving visualization of the charts for not to do an extensive research in how to style it perfect using recharts
+  const chartData = mergeData(data.debit, data.credit);
+
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        data={data}
+      <BarChart
+        data={chartData}
         margin={{ top: 16, right: 24, left: 10, bottom: 0 }}
+        barCategoryGap="30%"
+        barGap={4}
       >
         <CartesianGrid
           strokeDasharray="3 3"
@@ -144,43 +163,40 @@ const BankAccBalance = ({ bank }: Props) => {
           width={72}
         />
 
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip
+          content={<CustomTooltip />}
+          cursor={{ fill: "rgba(255,255,255,0.04)" }}
+        />
 
         <Legend
           wrapperStyle={{
             fontSize: "12px",
             paddingTop: "12px",
-
             color: "#9ca3af",
           }}
           formatter={(value: string) =>
-            value === "monthlyFlow" ? "Monthly Flow" : "Balance"
+            value === "cashIn" ? "Cash In" : "Cash Out"
           }
         />
 
-        <ReferenceLine y={0} stroke="#6b7280" strokeDasharray="4 2" />
-
-        <Line
-          type="monotone"
-          dataKey="balance"
-          stroke="#2563eb"
-          strokeWidth={2.5}
-          dot={false}
-          activeDot={{ r: 5, fill: "#2563eb", strokeWidth: 0 }}
+        <Bar
+          dataKey="cashIn"
+          fill="#10b981"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={40}
+          barSize={10}
         />
 
-        <Line
-          type="monotone"
-          dataKey="monthlyFlow"
-          stroke="#10b981"
-          strokeWidth={2}
-          strokeDasharray="5 3"
-          dot={false}
-          activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}
+        <Bar
+          dataKey="cashOut"
+          fill="#dc2626"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={40}
+          barSize={10}
         />
-      </LineChart>
+      </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export default BankAccBalance;
+export default CashFlow;
