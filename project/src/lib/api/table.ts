@@ -2,6 +2,7 @@ import { NormalizedTransaction } from "@/interfaces/banks/normalized";
 import { getRates } from "../db/rates";
 import { getUsers } from "../db/users";
 import { getNormalizedTransactions } from "./normalize";
+import { convertRates } from "./currency";
 
 interface Props {
   name: string;
@@ -174,12 +175,16 @@ export const unifiedCurrencies = async (
   */
 
   return transactions.map((t) => {
+    const newAmount = convertRates(
+      t.currency as "USD" | "CAD" | "EUR" | "GBP",
+      currency,
+      t.amount,
+      rates,
+    );
     return {
       ...t,
       currency: currency,
-      amount:
-        (t.amount * rates[t.currency as "USD" | "CAD" | "EUR" | "GBP"]) /
-        rates[currency],
+      amount: newAmount,
     };
   });
 };
