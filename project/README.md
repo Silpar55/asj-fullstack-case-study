@@ -12,6 +12,26 @@ Open [http://localhost:3000](http://localhost:3000). No environment variables or
 
 ---
 
+## Mock Credentials
+
+Use the following accounts to log in and test role-based access control.
+
+### Full Access Users (All Roles)
+
+**Admin**
+
+- Email: alex.rivera@circuitlabs.io
+- Password: CircuitAdmin2025!
+
+---
+
+### Restricted Access User (Single Role Test)
+
+**Viewer Only**
+
+- Email: viewer.only@circuitlabs.io
+- Password: ViewerOnly2025!
+
 ## Architecture
 
 ### Project Structure
