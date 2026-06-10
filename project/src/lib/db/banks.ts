@@ -9,6 +9,10 @@ import chaseTransactions from "@/../data/transactions/chase.json";
 
 // In reality, we need asynchronous function for calling database.
 
+export function getBanksNames() {
+  return ["amex", "boa", "chase"];
+}
+
 export async function getAmexData(): Promise<AmexTransaction> {
   return amexTransactions as AmexTransaction;
 }

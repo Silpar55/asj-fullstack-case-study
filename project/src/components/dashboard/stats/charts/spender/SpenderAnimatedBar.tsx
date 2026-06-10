@@ -18,8 +18,6 @@ const SpenderAnimatedBar = ({ percentages }: Props) => {
 
   const sorted = [...percentages].sort((a, b) => b.percentage - a.percentage);
 
-  console.log(sorted);
-
   return (
     <div className="h-2 rounded-full bg-dashboard-color flex overflow-hidden">
       {sorted.map((p, index) => (
