@@ -60,7 +60,7 @@ export const getTopVendor = async () => {
   return topVendors;
 };
 
-export const getTopCategory = async () => {
+export const getTopCategories = async () => {
   // Same approach as vendor but for category
 
   let transactions = await getNormalizedTransactions({});

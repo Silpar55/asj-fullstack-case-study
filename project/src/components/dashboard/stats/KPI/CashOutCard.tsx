@@ -10,7 +10,7 @@ const CashOutCard = () => {
 
   return (
     <div
-      className={`p-3 bg-nav w-1/2 rounded-lg text-center ${barlow.className}`}
+      className={`p-3 bg-nav w-1/2 rounded-lg text-center flex flex-col justify-center ${barlow.className}`}
     >
       {!error && (
         <>

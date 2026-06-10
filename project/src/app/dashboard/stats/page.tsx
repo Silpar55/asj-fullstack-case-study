@@ -11,6 +11,7 @@ import { getUser } from "@/lib/api/auth";
 import Spinner from "@/components/dashboard/Spinner";
 import CashInCard from "@/components/dashboard/stats/KPI/CashInCard";
 import CashOutCard from "@/components/dashboard/stats/KPI/CashOutCard";
+import TopCategoriesCard from "@/components/dashboard/stats/KPI/TopCategoriesCard";
 
 export default function Stats() {
   // RABC Logic
@@ -59,12 +60,12 @@ export default function Stats() {
       </div>
 
       <section className="w-full flex justify-between gap-5">
-        <section className="w-1/2 flex gap-5">
+        <section className="w-1/2 h-1/2 flex gap-5">
           <CashInCard />
           <CashOutCard />
         </section>
         <section className="w-1/2">
-          <h1>RIGHT</h1>
+          <TopCategoriesCard />
         </section>
       </section>
     </main>
