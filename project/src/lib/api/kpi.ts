@@ -84,6 +84,33 @@ export const getTopVendors = async () => {
   return topVendors;
 };
 
+export const getTopSpenders = async () => {
+  // Here we need to join the total spending (either cashIn or cashOut) to know which person
+  // has been the one that flow the most cash
+
+  let transactions = await getNormalizedTransactions({});
+
+  // Convert all amount in USD
+  transactions = await unifiedCurrencies(transactions, "USD");
+
+  const spender = new Map();
+
+  transactions.forEach((t) => {
+    spender.set(
+      t.authorizedBy,
+      (spender.get(t.authorizedBy) ?? 0) + Math.abs(t.amount),
+    );
+  });
+
+  // Then convert into array, sort by highest value and get top spender
+
+  const spenderArray: [string, number][] = Array.from(spender);
+  const sorted = spenderArray.sort((a, b) => b[1] - a[1]);
+
+  const topSpender = sorted; // We want to display all spender for better look
+
+  return topSpender;
+};
 export const getTopCategories = async () => {
   // Same approach as vendor but for category
 

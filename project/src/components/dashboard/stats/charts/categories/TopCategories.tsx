@@ -1,8 +1,9 @@
 import { getTopCategories, getTotalCashIn } from "@/lib/api/kpi";
 import useSWR from "swr";
 import Spinner from "../../../Spinner";
-import AnimatedBar from "./AnimatedBar";
+
 import { formatCash } from "@/lib/utils/formatStats";
+import CategoryAnimatedBar from "./CategoryAnimatedBar";
 
 const TopCategories = () => {
   const { data: categories, isLoading: categoriesLoading } = useSWR(
@@ -13,9 +14,9 @@ const TopCategories = () => {
     getTotalCashIn(),
   );
 
-  const calculatePercentage = (total: number, spend: number) => {
-    if (!total) return 0;
-    return (spend / total) * 100;
+  const calculatePercentage = (spend: number) => {
+    if (!cashIn) return 0;
+    return (spend / cashIn) * 100;
   };
 
   if (cashInLoading || categoriesLoading) return <Spinner />;
@@ -23,7 +24,7 @@ const TopCategories = () => {
   return (
     <section className="mt-5 flex flex-col gap-4">
       {categories?.map((cat) => {
-        const percentage = calculatePercentage(cashIn as number, cat[1]);
+        const percentage = calculatePercentage(cat[1]);
 
         return (
           <div key={cat[0]}>
@@ -33,7 +34,7 @@ const TopCategories = () => {
                 {formatCash(cat[1])}
               </h2>
             </div>
-            <AnimatedBar percentage={percentage} />
+            <CategoryAnimatedBar percentage={percentage} />
           </div>
         );
       })}

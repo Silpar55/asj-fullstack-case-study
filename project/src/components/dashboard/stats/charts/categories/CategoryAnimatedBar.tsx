@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const AnimatedBar = ({ percentage }: { percentage: number }) => {
+const CategoryAnimatedBar = ({ percentage }: { percentage: number }) => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
@@ -22,4 +22,4 @@ const AnimatedBar = ({ percentage }: { percentage: number }) => {
   );
 };
 
-export default AnimatedBar;
+export default CategoryAnimatedBar;

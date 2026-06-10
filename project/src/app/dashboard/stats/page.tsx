@@ -13,6 +13,7 @@ import CashInCard from "@/components/dashboard/stats/KPI/CashInCard";
 import CashOutCard from "@/components/dashboard/stats/KPI/CashOutCard";
 import TopCategoriesCard from "@/components/dashboard/stats/KPI/TopCategoriesCard";
 import TopVendorsCard from "@/components/dashboard/stats/KPI/TopVendorsCard";
+import TopSpenderCard from "@/components/dashboard/stats/KPI/TopSpenderCard";
 
 export default function Stats() {
   // RABC Logic
@@ -68,6 +69,7 @@ export default function Stats() {
         <section className="w-1/2 flex flex-col gap-5">
           <TopCategoriesCard />
           <TopVendorsCard />
+          <TopSpenderCard />
         </section>
       </section>
     </main>
