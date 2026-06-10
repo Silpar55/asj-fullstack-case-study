@@ -69,6 +69,7 @@ export const formatBoa = (
           | "posted"
           | "failed"
           | "other",
+        balance: transaction.runningBalance,
         source: transaction,
       };
     }),
@@ -85,7 +86,11 @@ export const formatChase = (
         date: transaction.transactionDate,
         postDate: transaction.postingDate,
         description: transaction.description,
-        amount: transaction.amount,
+        amount:
+          (transaction.transactionType.toLowerCase() as "debit" | "credit") ===
+          "credit"
+            ? transaction.amount
+            : -transaction.amount,
         currency: transaction.currency,
         type: transaction.transactionType.toLowerCase() as "debit" | "credit",
         category: transaction.categoryName,
@@ -93,6 +98,7 @@ export const formatChase = (
         bank: "chase" as BankType,
         authorizedBy: transaction.initiatedBy.name,
         status: transaction.pending ? "pending" : "posted",
+        balance: data.account.currentBalance,
         source: transaction,
       };
     }),

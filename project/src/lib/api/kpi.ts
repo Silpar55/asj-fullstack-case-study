@@ -1,7 +1,9 @@
 // Here I will hold the logic of all the KPI displayed in the stats dashboard
 
+import { TransactionList } from "@/interfaces/banks/boa";
 import { getNormalizedTransactions } from "./normalize";
 import { unifiedCurrencies } from "./table";
+import { getAmexData, getChaseData } from "../db/banks";
 
 // Total cash in
 export const getTotalCashIn = async () => {
@@ -146,4 +148,96 @@ export const getVendorCount = async () => {
   });
 
   return vendors.size;
+};
+
+export const getBankAccountBalance = async (bank: string) => {
+  /*
+    To get bank account balance is different for each bank
+
+    - BoA is easier to implement because it has runningBalance in each of the transactions
+      so we only require to get the latest transaction's date of that month and get the running balance
+
+    - Amex has no per-transaction balance, but the full response carries
+      `statementPeriod.closingBalance` (the amount owed after the statement
+      period closes). We use it as an base data to subtract the total net flow
+      across all months to derive the balance before the first transaction,
+      then accumulate forward month by month.
+
+    - Chase has no per-transaction balance either. Same approach using
+      `account.currentBalance`.
+  */
+
+  const transactions = await getNormalizedTransactions({ bank });
+
+  // BoA
+  // Real running balance is available per transaction in source, no need to accumulate manually
+  if (bank === "boa") {
+    const monthlyEndBalance = new Map<string, number>();
+    const monthlyFlow = new Map<string, number>();
+
+    transactions.forEach((t) => {
+      const yearMonth = t.date.slice(0, 7); // YYYY-MM
+      const src = t.source as unknown as TransactionList;
+
+      // Capture the first occurrence per month
+      // to get the end-of-month running balance.
+      if (!monthlyEndBalance.has(yearMonth)) {
+        monthlyEndBalance.set(yearMonth, src.runningBalance);
+      }
+
+      // BoA amounts are always positive so we need to know the type
+      const signedAmount = t.type === "credit" ? t.amount : -t.amount;
+      monthlyFlow.set(
+        yearMonth,
+        (monthlyFlow.get(yearMonth) ?? 0) + signedAmount,
+      );
+    });
+
+    return Array.from(monthlyEndBalance.keys())
+      .sort()
+      .map((month) => ({
+        month,
+        balance: monthlyEndBalance.get(month)!,
+        monthlyFlow: monthlyFlow.get(month) ?? 0,
+      }));
+  }
+
+  // Amex & Chase
+  const monthlyFlow = new Map<string, number>();
+
+  transactions.forEach((t) => {
+    const yearMonth = t.date.slice(0, 7); // YYYY-MM
+    monthlyFlow.set(yearMonth, (monthlyFlow.get(yearMonth) ?? 0) + t.amount);
+  });
+
+  const months = Array.from(monthlyFlow.keys()).sort();
+  const totalFlow = months.reduce(
+    (sum, m) => sum + (monthlyFlow.get(m) ?? 0),
+    0,
+  );
+
+  // Fetch the bank's reported final balance to use as the anchor point
+  let seedBalance = 0;
+
+  if (bank === "amex") {
+    const raw = await getAmexData();
+    seedBalance = raw.statementPeriod.closingBalance;
+  } else if (bank === "chase") {
+    const raw = await getChaseData();
+    seedBalance = raw.account.currentBalance;
+  }
+
+  // Work backwards from the known ending balance to find where we started,
+  // then roll forward month by month.
+  let balance = seedBalance - totalFlow;
+
+  return months.map((month) => {
+    const flow = monthlyFlow.get(month) ?? 0;
+    balance += flow;
+    return {
+      month,
+      balance,
+      monthlyFlow: flow,
+    };
+  });
 };

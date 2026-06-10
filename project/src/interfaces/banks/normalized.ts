@@ -66,6 +66,8 @@ export interface NormalizedTransaction {
    */
   postDate?: string;
 
+  balance?: number;
+
   /** * The current status of the transaction.
    * Useful for UIs to grey-out or flag 'pending' transactions vs 'posted' ones.
    */
