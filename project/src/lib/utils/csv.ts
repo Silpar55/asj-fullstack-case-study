@@ -1,4 +1,21 @@
 import { NormalizedTransaction } from "@/interfaces/banks/normalized";
+import { formatCurrency, formatDate } from "./formatRows";
+
+const escapeCSV = (value: any) => {
+  if (value === null || value === undefined) return "";
+
+  const stringValue = String(value);
+
+  // Escape quotes by doubling them
+  const escaped = stringValue.replace(/"/g, '""');
+
+  // Wrap in quotes if it contains comma, quote, or newline
+  if (/[",\n]/.test(escaped)) {
+    return `"${escaped}"`;
+  }
+
+  return escaped;
+};
 
 export const exportCSV = (
   transactions: NormalizedTransaction[],
@@ -8,7 +25,6 @@ export const exportCSV = (
     // Convert the transactions array into a CSV string
     const csvString = [
       [
-        "Starred",
         "Transaction",
         "Amount",
         "Date",
@@ -18,14 +34,13 @@ export const exportCSV = (
         "Vendor",
       ],
       ...transactions.map((t) => [
-        "True",
-        t.description,
-        t.amount,
-        t.date,
-        t.category,
-        t.bank,
-        t.authorizedBy,
-        t.vendor,
+        escapeCSV(t.description),
+        escapeCSV(formatCurrency(t.amount, t.currency)),
+        escapeCSV(formatDate(t.date)),
+        escapeCSV(t.category),
+        escapeCSV(t.bank.toUpperCase()),
+        escapeCSV(t.authorizedBy),
+        escapeCSV(t.vendor),
       ]),
     ]
       .map((row) => row.join(","))
