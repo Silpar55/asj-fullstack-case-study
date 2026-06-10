@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className={`${barlow.className} antialiased flex`}>
+    <main className={`${barlow.className} antialiased flex ml-20`}>
       <Navbar />
       {children}
     </main>

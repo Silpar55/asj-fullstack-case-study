@@ -36,24 +36,48 @@ export const getNetCashFlow = async () => {
   return transactions.reduce((curr, t) => curr + t.amount, 0).toFixed(0);
 };
 
-export const getTopVendor = async () => {
+export const getTopVendors = async () => {
   // To get top vendors we can create a hashmap that allow us to sum up amounts based on the vendor
+  // Then we can also vendor's last transaction
 
   let transactions = await getNormalizedTransactions({});
 
   // Convert all amount in USD
   transactions = await unifiedCurrencies(transactions, "USD");
 
-  const vendors = new Map();
+  const vendors: Map<
+    string,
+    {
+      amount: number;
+      transactionDate: string;
+    }
+  > = new Map();
 
   transactions.forEach((t) => {
-    vendors.set(t.vendor, (vendors.get(t.vendor) ?? 0) + t.amount);
+    const current = vendors.get(t.vendor) ?? {
+      amount: 0,
+      transactionDate: "",
+    };
+
+    let latestTransaction: string = current.transactionDate;
+    // Check if the new transaction's date is earliest than current
+    if (
+      !current.transactionDate ||
+      new Date(t.date).getDate() < new Date(current.transactionDate).getDate()
+    )
+      latestTransaction = t.date;
+
+    vendors.set(t.vendor, {
+      amount: current.amount + t.amount,
+      transactionDate: latestTransaction,
+    });
   });
 
   // Then convert into array, sort by highest value and get top vendors
 
-  const vendorsArray: [string, number][] = Array.from(vendors);
-  const sorted = vendorsArray.sort((a, b) => b[1] - a[1]);
+  const vendorsArray: [string, { amount: number; transactionDate: string }][] =
+    Array.from(vendors);
+  const sorted = vendorsArray.sort((a, b) => b[1].amount - a[1].amount);
 
   const topVendors = sorted.slice(0, 5);
 

@@ -39,7 +39,7 @@ const Navbar = () => {
   }, [router]);
 
   return (
-    <nav className="flex flex-col align-middle justify-between w-20 h-screen py-5 bg-nav border-r border-divider">
+    <nav className="fixed left-0 top-0 flex flex-col align-middle justify-between w-20 min-h-screen  py-5 bg-nav border-r border-divider">
       <div className="flex flex-col gap-5">
         <div className="w-full px-1 flex flex-col gap-3">
           <img src="/logo.svg" alt="logo" className="mx-auto" />
