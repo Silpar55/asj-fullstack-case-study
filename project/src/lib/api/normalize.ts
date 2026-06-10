@@ -41,7 +41,7 @@ export const formatAmex = (
           | "posted"
           | "failed"
           | "other",
-        source: charge,
+        source: data,
       };
     }),
   );
@@ -69,7 +69,7 @@ export const formatBoa = (
           | "posted"
           | "failed"
           | "other",
-        source: transaction,
+        source: data,
       };
     }),
   );
@@ -93,7 +93,7 @@ export const formatChase = (
         bank: "chase" as BankType,
         authorizedBy: transaction.initiatedBy.name,
         status: transaction.pending ? "pending" : "posted",
-        source: transaction,
+        source: data,
       };
     }),
   );
