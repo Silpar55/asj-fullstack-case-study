@@ -47,7 +47,7 @@ export const Table = ({
                 setIsModalOpen(true);
               }}
               key={t.id}
-              className="grid grid-cols-[50px_.75fr_.5fr_.5fr_.5fr_.5fr_.5fr_.5fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted"
+              className=" cursor-pointer grid grid-cols-[50px_.75fr_.5fr_.5fr_.5fr_.5fr_.5fr_.5fr] items-center  bg-dashboard-bg py-4 rounded-md border-b border-dotted"
             >
               <th className="flex justify-end">
                 <img src="/star.svg" alt="" className="w-6" />

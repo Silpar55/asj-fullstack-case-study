@@ -10,9 +10,9 @@ import { inter, barlow } from "@/app/fonts";
 import { UserLS } from "@/interfaces/auth/userLS";
 import { hasAccess } from "@/lib/api/rabc";
 import { getUser } from "@/lib/api/auth";
-import { Table } from "@/components/dashboard/Table";
+import { Table } from "@/components/dashboard/transactions/Table";
 import { NormalizedTransaction } from "@/interfaces/banks/normalized";
-import TableFilters from "@/components/dashboard/TableFilters";
+import TableFilters from "@/components/dashboard/transactions/TableFilters";
 import {
   getTransactionsByAuthBy,
   getTransactionsByBank,
@@ -20,7 +20,8 @@ import {
   getTransactionsByDate,
   unifiedCurrencies,
 } from "@/lib/api/table";
-import { Modal } from "@/components/dashboard/Modal";
+import { Modal } from "@/components/dashboard/transactions/Modal";
+import Spinner from "@/components/dashboard/Spinner";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -97,9 +98,12 @@ export default function Transactions() {
   }, [router]);
 
   // To prevent UI of flashing while checking localStorage
-  if (!isAuthorized) return <p className="text-white">Loading...</p>;
-
-  if (isLoading) return <p className="text-white">Loading...</p>;
+  if (!isAuthorized || isLoading)
+    return (
+      <div className="w-full h-screen flex justify-center items-center align-middle">
+        <Spinner />
+      </div>
+    );
 
   if (error) return <p className="text-white">Error loading transactions</p>;
 

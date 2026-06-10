@@ -57,7 +57,7 @@ export interface NormalizedTransaction {
   authorizedBy: User | null | string;
 
   /** The original raw object from the bank (used for the detail modal) */
-  source: AmexTransaction | BoaTransaction | ChaseTransaction;
+  source: Transaction | TransactionList | Charge;
 
   // --- Recommended Additions ---
 

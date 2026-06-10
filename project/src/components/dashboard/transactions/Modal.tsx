@@ -36,6 +36,7 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
 
     if (transaction.bank === "amex") {
       const src = transaction.source as unknown as Charge;
+      console.log(src);
       return (
         <div className="flex flex-col gap-2 w-full">
           <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">
@@ -45,27 +46,27 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
             <span className="text-xs font-medium">
               Reward Eligible:{" "}
               <span
-                className={`font-bold ${src.rewardEligible ? "text-green-400" : "text-red-400"}`}
+                className={`font-bold ${src?.rewardEligible ? "text-green-400" : "text-red-400"}`}
               >
-                {src.rewardEligible ? "Yes" : "No"}
+                {src?.rewardEligible ? "Yes" : "No"}
               </span>
             </span>
             <span className="text-xs font-medium">
               Category Code:{" "}
-              <span className="font-bold">{src.merchant.categoryCode}</span>
+              <span className="font-bold">{src?.merchant.categoryCode}</span>
             </span>
           </div>
           <div className="flex gap-1 justify-between w-full">
             <span className="text-xs font-medium">
               Location:{" "}
               <span className="font-bold">
-                {src.merchant.city}, {src.merchant.state},{" "}
-                {src.merchant.country}
+                {src?.merchant.city}, {src?.merchant.state},{" "}
+                {src?.merchant.country}
               </span>
             </span>
             <span className="text-xs font-medium">
               Department:{" "}
-              <span className="font-bold">{src.employee.department}</span>
+              <span className="font-bold">{src?.employee.department}</span>
             </span>
           </div>
           <div className="flex gap-1 justify-between w-full">
@@ -73,14 +74,14 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
               Original Amount:{" "}
               <span className="font-bold">
                 {formatCurrency(
-                  src.originalAmountInCents / 100,
-                  src.billingCurrency,
+                  src?.originalAmountInCents / 100,
+                  src?.billingCurrency,
                 )}
               </span>
             </span>
             <span className="text-xs font-medium">
               Display Amount:{" "}
-              <span className="font-bold">{src.amountDisplay}</span>
+              <span className="font-bold">{src?.amountDisplay}</span>
             </span>
           </div>
         </div>
@@ -97,24 +98,26 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
           <div className="flex gap-1 justify-between w-full">
             <span className="text-xs font-medium">
               Transaction Type:{" "}
-              <span className="font-bold">{src.transactionType}</span>
+              <span className="font-bold">{src?.transactionType}</span>
             </span>
             <span className="text-xs font-medium">
               Department:{" "}
-              <span className="font-bold">{src.originator.department}</span>
+              <span className="font-bold">
+                {src?.originator.department || "unknown"}
+              </span>
             </span>
           </div>
           <div className="flex gap-1 justify-between w-full">
             <span className="text-xs font-medium">
               Running Balance:{" "}
               <span className="font-bold">
-                {formatCurrency(src.runningBalance, src.currencyCode)}
+                {formatCurrency(src?.runningBalance, src?.currencyCode)}
               </span>
             </span>
             <span className="text-xs font-medium">
               Original Amount:{" "}
               <span className="font-bold">
-                {formatCurrency(src.originalAmount, src.currencyCode)}
+                {formatCurrency(src?.originalAmount, src?.currencyCode)}
               </span>
             </span>
           </div>
@@ -132,26 +135,26 @@ export const Modal = ({ isOpen, onClose, title, transaction }: ModalProps) => {
           <div className="flex gap-1 justify-between w-full">
             <span className="text-xs font-medium">
               Category Code:{" "}
-              <span className="font-bold">{src.categoryCode}</span>
+              <span className="font-bold">{src?.categoryCode}</span>
             </span>
             <span className="text-xs font-medium">
               Department:{" "}
-              <span className="font-bold">{src.initiatedBy.department}</span>
+              <span className="font-bold">{src?.initiatedBy.department}</span>
             </span>
           </div>
           <div className="flex gap-1 justify-between w-full">
             <span className="text-xs font-medium">
               Original Amount:{" "}
               <span className="font-bold">
-                {formatCurrency(Math.abs(src.originalAmount), src.currency)}
+                {formatCurrency(Math.abs(src?.originalAmount), src?.currency)}
               </span>
             </span>
             <span className="text-xs font-medium">
               Pending:{" "}
               <span
-                className={`font-bold ${src.pending ? "text-orange-400" : "text-green-400"}`}
+                className={`font-bold ${src?.pending ? "text-orange-400" : "text-green-400"}`}
               >
-                {src.pending ? "Yes" : "No"}
+                {src?.pending ? "Yes" : "No"}
               </span>
             </span>
           </div>

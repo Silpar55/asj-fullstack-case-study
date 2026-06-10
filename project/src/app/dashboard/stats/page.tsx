@@ -8,6 +8,7 @@ import LastUpdated from "@/components/dashboard/LastUpdated";
 import { UserLS } from "@/interfaces/auth/userLS";
 import { hasAccess } from "@/lib/api/rabc";
 import { getUser } from "@/lib/api/auth";
+import Spinner from "@/components/dashboard/Spinner";
 
 export default function Stats() {
   // RABC Logic
@@ -39,7 +40,12 @@ export default function Stats() {
   }, [router]);
 
   // To prevent UI of flashing while checking localStorage
-  if (!isAuthorized) return <p>Loading...</p>;
+  if (!isAuthorized)
+    return (
+      <div className="w-full h-screen flex justify-center items-center align-middle">
+        <Spinner />
+      </div>
+    );
 
   return (
     <main

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { getUser } from "@/lib/api/auth";
+import Spinner from "@/components/dashboard/Spinner";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -20,7 +21,12 @@ export default function Dashboard() {
   }, [router]);
 
   // To prevent UI of flashing while checking localStorage
-  if (!isAuthorized) return <p>Loading...</p>;
+  if (!isAuthorized)
+    return (
+      <div className="w-full h-screen flex justify-center items-center align-middle">
+        <Spinner />
+      </div>
+    );
 
   return redirect("/dashboard/transactions");
 }
