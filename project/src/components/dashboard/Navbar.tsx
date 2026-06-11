@@ -18,6 +18,11 @@ const links = [
     title: "workspace",
     href: "transactions",
   },
+  {
+    src: "/star-blue.svg",
+    title: "predict",
+    href: "custom",
+  },
 ];
 
 const Navbar = () => {

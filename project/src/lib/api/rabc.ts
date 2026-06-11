@@ -15,7 +15,6 @@ export function hasAccess(
   const isTabAllowed = user.allowedTabs.includes(tab);
 
   // Check by role
-
   const isRoleAllowed = tabAccessMatrix[tab].includes(user.role);
 
   return isRoleAllowed && isTabAllowed;
