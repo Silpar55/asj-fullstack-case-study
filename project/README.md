@@ -56,7 +56,7 @@ src/
 │   │   ├── stats/
 │   │   │   └── page.tsx                  # Stats tab
 │   │   └── custom/
-│   │       └── page.tsx                  # Bonus tab (in progress)
+│   │       └── page.tsx                  # Prediction Lab tab
 │   │
 │   └── api/                              # Next.js server-side API routes
 │       ├── auth/
@@ -86,6 +86,13 @@ src/
 │       │   ├── Modal.tsx                 # Transaction detail modal (with bank-specific fields)
 │       │   ├── DatePicker.tsx            # Date filter input
 │       │   └── ToolTip.tsx               # Authorized By hover tooltip
+│       ├── custom/
+│       │   ├── SliderCard.tsx            # Growth assumption slider with manual input
+│       │   ├── ProjectionKPICard.tsx     # Projected net flow / cash in / cash out card
+│       │   ├── CashFlowChart.tsx         # Bar chart — historical vs projected cash flow
+│       │   ├── YearOverYearTable.tsx     # Year-by-year summary table (actuals + estimates)
+│       │   ├── CategoryPieChart.tsx      # Donut chart — projected spend by category + observed growth rates
+│       │   └── MethodologyNote.tsx       # Methodology disclaimer
 │       └── stats/
 │           ├── KPI/
 │           │   ├── CashInCard.tsx
@@ -125,6 +132,7 @@ src/
     ├── api/
     │   ├── normalize.ts     # Maps each bank's raw shape into NormalizedTransaction
     │   ├── kpi.ts           # All KPI calculations (totals, top vendors, spenders, balance, cashflow)
+    │   ├── custom.ts        # Prediction Lab — cash flow by year, categories by year, projections
     │   ├── table.ts         # Table utility functions — filters, currency unification, bank balance
     │   ├── currency.ts      # Exchange rate conversion logic
     │   ├── auth.ts          # localStorage helpers — getUser, saveUser, clearUser
@@ -160,17 +168,43 @@ Each bank encodes the same concepts differently. Chase signs the `amount` field 
 
 ---
 
-## What Was Skipped / In Progress
+## Prediction Lab (Bonus Tab)
 
-All core requirements are implemented. The only outstanding item is the **Custom tab** (bonus). The plan is a **Prediction Dashboard**: using the KPI data already computed (cash in, cash out, spend by category, top vendors across 2023–2025), project future spending based on configurable growth assumptions. For example: "If revenue grows 15% year-over-year, how does the spend breakdown look next year?" The data range is wide enough to build a simple trend model, and the KPI functions are already in place to feed it.
+The third tab is a **cash flow prediction interface** built on top of the transaction data already processed by the core KPI layer. Its purpose is to answer a practical question that the Stats tab cannot: *given what we know about how money moved in the past, what should we expect next year — and what decisions follow from that?*
+
+### What it shows
+
+- **Historical cash flow by year** — actual cash in and cash out per year (2023–2025), sourced directly from normalized transactions across all three banks.
+- **Category spend breakdown** — the top five spending categories with their observed year-over-year growth rates (2023→2024 and 2024→2025), derived per category rather than in aggregate. A category accelerating its growth rate signals a strategic shift worth watching.
+- **Projection model** — two assumption sliders (revenue growth %, expense growth %) compound the most recent year's actuals forward into 2026 and 2027. The result surfaces projected net flow, category spend estimates, and a visual comparison of historical vs. projected cash flow.
+
+### The reasoning
+
+A finance dashboard that only shows the past is a reporting tool. The value in a CRM context comes from connecting historical patterns to forward-looking decisions: if you expect seasonal demand to increase next year, you expect revenue growth; if you expect revenue growth, you expect to invest more in certain categories. The Prediction Lab makes that chain of reasoning explicit and interactive.
+
+The category growth rates derived from real transaction data give each assumption a factual anchor. Software spending accelerating 24% year-over-year is a different kind of cost pressure than payroll growing 11%. Understanding which categories are accelerating tells you where your cost structure is shifting before you see it in a P&L.
+
+### What is not possible with this data
+
+Bank transaction data alone cannot produce net income, gross margin, or contribution margin. Cash in is not revenue — it can include loans, intercompany transfers, or reimbursements. Cash out is not COGS — it includes capital expenditure, financing, and operating costs that would need to be separated in a real model. The projection here is a scenario tool, not a forecast.
+
+### What would make it a real forecast
+
+With a richer dataset and more time, two improvements would move this from a prediction lab to an actual forecast:
+
+1. **Per-category growth rates as defaults** — instead of a single shared expense growth slider, compute each category's observed compound annual growth rate from the transaction history and use that as the slider default. The user adjusts from an evidence-based starting point rather than an arbitrary one.
+
+2. **An AI agent in the loop** — the sliders are currently manual. An LLM agent with access to the transaction data and external signals (seasonality indexes, industry benchmarks, macroeconomic indicators) could set those assumptions automatically and explain its reasoning. The slider then becomes a confidence adjustment on top of a model output rather than the model itself. That is the direction this tab was designed to grow toward.
 
 ---
 
 ## AI Tools Used
 
-| Tool                    | How it was used                                                                                                                                                                                                                                                                                                                                                            |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Claude Sonnet**       | Recharts styling (line and bar chart dark-theme design), bank balance logic (anchoring each bank to its reported closing/current balance), TypeScript interface generation from raw bank JSON, KPI semantic review (identifying that top vendors / top spenders / top categories should filter to debits only), and writing this README for structuring correctly my ideas |
-| **ChatGPT (free tier)** | A brief early look at recharts component patterns before switching to Claude                                                                                                                                                                                                                                                                                               |
+| Tool                    | How it was used |
+| ----------------------- | --------------- |
+| **Claude Sonnet**       | Recharts chart design (dark-theme bar and line charts), bank balance logic (per-bank anchor technique), TypeScript interface generation from raw bank JSON, KPI semantic review (debit-only filtering for vendors / spenders / categories), Prediction Lab UI layout and component architecture, and structuring this README from verbal notes |
+| **ChatGPT (free tier)** | A brief early look at recharts component patterns before switching to Claude |
 
-The core of the application — normalization rules, RBAC design, currency conversion math, KPI calculation approach, filter pipeline, and overall project structure — was written without AI assistance. AI was used to increase productivity on tasks where the output is not what is being evaluated: styling, interface boilerplate, and documentation.
+The core of the application — normalization rules, RBAC design, currency conversion math, KPI calculation approach, filter pipeline, and overall project structure — was written without AI assistance. AI was used to increase productivity on tasks where the output is not what is being evaluated: chart styling, component boilerplate, and documentation.
+
+Due to time constraints, AI was also used more heavily on the Prediction Lab tab for dashboard layout and visualization design. That was a deliberate tradeoff: the interesting engineering in the custom tab is the data pipeline (`getCashFlowByYear`, `getCategoriesByYear`, `getProjections`) and the decision to derive observed per-category growth rates from real transaction data rather than using a single flat assumption. The visual layer on top of that logic was where AI assistance was most productive, and the result is consistent with the rest of the dashboard's design language.
