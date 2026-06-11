@@ -73,22 +73,7 @@ export default function Custom() {
   const net2026 = proj2026.cashIn - proj2026.cashOut;
 
   const chartData = [
-    ...historical.slice(0, -1).map((r) => ({
-      period: r.period,
-      cashIn: r.cashIn,
-      cashOut: r.cashOut,
-    })),
-    ...(base
-      ? [
-          {
-            period: base.period,
-            cashIn: base.cashIn,
-            cashOut: base.cashOut,
-            cashInProj: base.cashIn,
-            cashOutProj: base.cashOut,
-          },
-        ]
-      : []),
+    ...historical.map((r) => ({ period: r.period, cashIn: r.cashIn, cashOut: r.cashOut })),
     { period: "2026", cashInProj: proj2026.cashIn, cashOutProj: proj2026.cashOut },
     { period: "2027", cashInProj: proj2027.cashIn, cashOutProj: proj2027.cashOut },
   ];

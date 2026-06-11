@@ -147,6 +147,7 @@ const CashFlow = () => {
         />
 
         <XAxis
+          xAxisId={0}
           dataKey="month"
           tick={<CustomTick />}
           tickMargin={10}
@@ -154,6 +155,8 @@ const CashFlow = () => {
           tickLine={false}
           interval="preserveStartEnd"
         />
+
+        <XAxis xAxisId={1} dataKey="month" hide />
 
         <YAxis
           tickFormatter={formatAxisDollar}
@@ -180,6 +183,7 @@ const CashFlow = () => {
         />
 
         <Bar
+          xAxisId={0}
           dataKey="cashIn"
           fill="#10b981"
           radius={[4, 4, 0, 0]}
@@ -188,6 +192,7 @@ const CashFlow = () => {
         />
 
         <Bar
+          xAxisId={0}
           dataKey="cashOut"
           fill="#dc2626"
           radius={[4, 4, 0, 0]}

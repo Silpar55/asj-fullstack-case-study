@@ -1,10 +1,10 @@
 "use client";
 
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -56,7 +56,10 @@ const CustomTooltip = ({
         )}
       </p>
       {payload.map((entry) => (
-        <div key={entry.name} className="flex justify-between gap-6 mb-1 last:mb-0">
+        <div
+          key={entry.name}
+          className="flex justify-between gap-6 mb-1 last:mb-0"
+        >
           <span style={{ color: entry.color }} className="font-medium">
             {entry.name}
           </span>
@@ -77,18 +80,32 @@ export const CashFlowChart = ({ data }: Props) => (
       Cash Flow — Historical vs Projected
     </h2>
     <p className="text-xs text-gray-500 uppercase tracking-widest mb-5">
-      Solid lines = actual · Dashed lines = projected
+      Solid = actual &nbsp;·&nbsp; Faded = projected
     </p>
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 8, right: 24, left: 10, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          barCategoryGap="5%"
+          barGap={4}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#374151"
+            vertical={false}
+          />
           <XAxis
+            xAxisId={0}
             dataKey="period"
             tick={{ fill: "#9ca3af", fontSize: 11 }}
             axisLine={{ stroke: "#374151" }}
             tickLine={false}
+            interval={0}
+            allowDuplicatedCategory={false}
+            padding={{ left: 20, right: 10 }}
           />
+          <XAxis xAxisId={1} dataKey="period" hide />
           <YAxis
             tickFormatter={fmtAxis}
             tick={{ fill: "#9ca3af", fontSize: 11 }}
@@ -96,39 +113,64 @@ export const CashFlowChart = ({ data }: Props) => (
             tickLine={false}
             width={72}
           />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "12px", color: "#9ca3af" }} />
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ fill: "rgba(255,255,255,0.04)" }}
+          />
+          <Legend
+            wrapperStyle={{
+              fontSize: "11px",
+              paddingTop: "12px",
+              color: "#9ca3af",
+            }}
+          />
           <ReferenceLine
-            x="2025"
+            x="2026"
             stroke="#6b7280"
             strokeDasharray="4 2"
-            label={{ value: "→ Projected", fill: "#9ca3af", fontSize: 10, position: "insideTopRight" }}
+            label={{
+              value: "← Projected",
+              fill: "#9ca3af",
+              fontSize: 10,
+              position: "insideTopLeft",
+            }}
           />
-          <Line
-            type="monotone" dataKey="cashIn" name="Cash In"
-            stroke="#10b981" strokeWidth={2.5}
-            dot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}
-            activeDot={{ r: 5, strokeWidth: 0 }}
+
+          {/* Historical */}
+          <Bar
+            xAxisId={0}
+            dataKey="cashIn"
+            name="Cash In"
+            fill="#10b981"
+            radius={[4, 4, 0, 0]}
           />
-          <Line
-            type="monotone" dataKey="cashOut" name="Cash Out"
-            stroke="#dc2626" strokeWidth={2.5}
-            dot={{ r: 4, fill: "#dc2626", strokeWidth: 0 }}
-            activeDot={{ r: 5, strokeWidth: 0 }}
+          <Bar
+            xAxisId={0}
+            dataKey="cashOut"
+            name="Cash Out"
+            fill="#dc2626"
+            radius={[4, 4, 0, 0]}
           />
-          <Line
-            type="monotone" dataKey="cashInProj" name="Proj. Cash In"
-            stroke="#10b981" strokeWidth={2} strokeDasharray="6 3" strokeOpacity={0.6}
-            dot={{ r: 4, fill: "#10b981", fillOpacity: 0.6, strokeWidth: 0 }}
-            activeDot={{ r: 5, strokeWidth: 0 }}
+
+          {/* Projected — same hues, faded */}
+          <Bar
+            xAxisId={1}
+            dataKey="cashInProj"
+            name="Proj. Cash In"
+            fill="#10b981"
+            fillOpacity={0.4}
+            radius={[4, 4, 0, 0]}
           />
-          <Line
-            type="monotone" dataKey="cashOutProj" name="Proj. Cash Out"
-            stroke="#dc2626" strokeWidth={2} strokeDasharray="6 3" strokeOpacity={0.6}
-            dot={{ r: 4, fill: "#dc2626", fillOpacity: 0.6, strokeWidth: 0 }}
-            activeDot={{ r: 5, strokeWidth: 0 }}
+          <Bar
+            xAxisId={1}
+            dataKey="cashOutProj"
+            name="Proj. Cash Out"
+            fill="#dc2626"
+            fillOpacity={0.4}
+            radius={[4, 4, 0, 0]}
+            maxBarSize={60}
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   </div>
